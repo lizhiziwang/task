@@ -1,0 +1,24 @@
+<template>
+  <div>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <ul id="messagesList"></ul>
+</template>
+<script>
+  var socket = new SockJS('http://127.0.0.1:8080/websocket-endpoint');
+  var stompClient = Stomp.over(socket);
+  stompClient.connect({}, function (frame) {
+    stompClient.subscribe('/topic/messages', function (message) {
+      var messagesList = document.getElementById('messagesList');
+      var listItem = document.createElement('li');
+      listItem.textContent = message.body;
+      messagesList.appendChild(listItem);
+    });
+  });
+  function sendMessage() {
+    var messageInput = document.getElementById('messageInput');
+    stompClient.send('/app/send', {}, messageInput.value);
+    messageInput.value = '';
+  }
+</script>
