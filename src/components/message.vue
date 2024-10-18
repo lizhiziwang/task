@@ -54,7 +54,7 @@
     }
     .all-mess{
         display: flex;
-        margin-bottom: 15px;
+        margin-bottom: 30px;
         width: 100%;
         padding-right: 0px;
     }
