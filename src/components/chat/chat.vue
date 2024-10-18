@@ -27,7 +27,7 @@
 <script setup>
     import { ref ,onMounted,watch,nextTick} from 'vue'
     import message from './message.vue'
-    import IconSend from './icons/IconSend.vue'
+    import IconSend from '../icons/IconSend.vue'
     
     var data = ref(null);
     // 获取 main 容器的引用

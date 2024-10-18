@@ -11,8 +11,8 @@ import testPo from '../components/testPo.vue'
 import _3Demo from '../components/_3Demo.vue'
 import door from '../components/door.vue'
 import cm from '../components/cm.vue'
-import chat from '../components/chat.vue'
-import message from '../components/message.vue'
+import chat from '../components/chat/chat.vue'
+import message from '../components/chat/message.vue'
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
@@ -24,12 +24,12 @@ const router = createRouter({
       component: cm
     },
     {
-      path: '/message',
+      path: '/chat/message',
       name: 'message',
       component: message
     },
     {
-      path: '/chat',
+      path: '/chat/chat',
       name: 'chat',
       component: chat
     },
