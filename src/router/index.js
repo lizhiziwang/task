@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import login from '../components/login.vue';
 import map from '../components/map.vue';
 import requestAxios from '../components/requestAxios.vue'
 import service from '../components/service.vue'
@@ -13,6 +12,7 @@ import door from '../components/door.vue'
 import cm from '../components/cm.vue'
 import chat from '../components/chat/chat.vue'
 import message from '../components/chat/message.vue'
+import login from '../components/chat/login.vue'
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
@@ -27,6 +27,11 @@ const router = createRouter({
       path: '/chat/message',
       name: 'message',
       component: message
+    },
+    {
+      path: '/chat/login',
+      name: 'login',
+      component: login
     },
     {
       path: '/chat/chat',
@@ -45,11 +50,6 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
-    },
-    {
-      path:'/login',
-      name:'login',
-      component:login
     },
     {
       path:'/map',
