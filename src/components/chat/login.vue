@@ -13,17 +13,25 @@
 <script setup>
     import { ref } from 'vue'
     import {service} from '@/components/js/http.js'
+    import { useRouter } from 'vue-router'
     // import axios from 'axios';
 
-    const username = ref('')
-    const pwd = ref('')
+    const username = ref('kirito')
+    const pwd = ref('123456')
+    const router = useRouter()
     function login(){
+        console.log(router)
         service.get('/user/login?'+'userName='+username.value+'&password='+pwd.value)
         .then(res=>{
-            let user = res.data.data;
+            let data = res.data.data;
+            console.log(data)
             if(res.data.code === 200){
-                localStorage.setItem('user',JSON.stringify(user));
-                alert('22222222222222222')
+                let e = JSON.parse(data)
+                localStorage.setItem('user',e.user);
+                localStorage.setItem('token',e.token);
+                console.log(e.token)
+                console.log(e.user.id)
+                router.push({path:'/chat/chat'})
             }else{
                 this.$message.error('用户名或密码错误')
             }
