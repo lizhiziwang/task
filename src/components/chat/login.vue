@@ -27,7 +27,7 @@
             console.log(data)
             if(res.data.code === 200){
                 let e = JSON.parse(data)
-                localStorage.setItem('user',e.user);
+                localStorage.setItem('user',JSON.stringify(e.user));
                 localStorage.setItem('token',e.token);
                 console.log(e.token)
                 console.log(e.user.id)

@@ -1,5 +1,6 @@
 import axios from 'axios';
  
+
 // 创建 Axios 实例
 const service = axios.create({
   baseURL: '/api', // 使用环境变量配置 baseURL
@@ -10,8 +11,8 @@ const service = axios.create({
 service.interceptors.request.use(
   (config) => {
     // // 在请求发送前可以进行一些配置，例如添加认证信息等
-    // let token = localStorage.getItem('token')
-    // config.headers['X-Auth-Token'] = token; // 示例：添加认证信息
+    let token = localStorage.getItem('token')
+    config.headers['Authorization'] = token; // 示例：添加认证信息
     return config;
   },
   (error) => {
@@ -24,6 +25,10 @@ service.interceptors.response.use(
   (response) => {
     // 在响应返回后，可以进行一些处理，例如判断是否需要更新令牌等
     // ...
+    let re = JSON.parse(response.data.data)
+    if(re.token != undefined){
+      localStorage.setItem('token', re.token)
+    }
     return response;
   },
   (error) => {
