@@ -1,4 +1,5 @@
 import axios from 'axios';
+// import { useRouter } from 'vue-router'
  
 
 // 创建 Axios 实例
@@ -24,16 +25,28 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     // 在响应返回后，可以进行一些处理，例如判断是否需要更新令牌等
-    // ...
-    let re = JSON.parse(response.data.data)
-    if(re.token != undefined){
-      localStorage.setItem('token', re.token)
+    //...
+    console.log(response.data);
+    if (response.data && response.data.code === 403) {
+      // const router = useRouter();
+      // router.push({ path: '/chat/login' });
+      location.href = '/chat/login';
+    }
+    let responseData;
+    try {
+      responseData = JSON.parse(response.data.data);
+    } catch (e) {
+      console.log('Failed to parse response data:', e);
+      return response;
+    }
+    if (responseData && responseData.token!== undefined) {
+      localStorage.setItem('token', responseData.token);
     }
     return response;
   },
   (error) => {
     // 处理响应错误
-    // ...
+    //...
     return Promise.reject(error);
   }
 );

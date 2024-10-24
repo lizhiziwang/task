@@ -36,7 +36,8 @@
     let userId = ref(null)
 
     onMounted(()=>{
-        userId.value = sessionStorage.getItem('id')
+        userId.value = JSON.parse(localStorage.getItem("user")).id
+        console.log("当前chatiD:"+userId.value)
     })
 
 </script>
