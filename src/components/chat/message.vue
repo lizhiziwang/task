@@ -1,7 +1,6 @@
 <template>
-    <div style="width: 100%;">
         <div id="one" class="one-mess" v-for="(item,index) in data" :key="index" style="width: 100%;">
-            <div class="all-mess" v-if="item.id != userId" id="bv">
+            <div class="all-mess" v-if="item.uid != userId" id="bv">
                 <el-avatar :size="50" 
                     :src="item.imgUrl"/>
                 <div class="message">
@@ -22,12 +21,11 @@
             
             </div>
         </div>
-    </div>
 </template>
 
 
 <script setup>
-    import { ref,onMounted } from 'vue'
+    import { ref,onMounted ,reactive,watch,onUpdated} from 'vue'
 
     let po = defineProps({
         data:Array
@@ -37,7 +35,16 @@
 
     onMounted(()=>{
         userId.value = JSON.parse(localStorage.getItem("user")).id
-        console.log("当前chatId:"+userId.value)
+        console.log("当前chatI d:"+userId.value)
+    })
+
+
+    watch(() => po.data, (newData) => {
+        data.value = newData
+    }, { deep: true })
+
+    onUpdated(() => {
+        console.log("Component updated. data:", data)
     })
 
 </script>
