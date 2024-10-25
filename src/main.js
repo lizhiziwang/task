@@ -6,12 +6,15 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 // import VueCesium from 'vue-cesium'
 import 'cesium/Build/Cesium/Widgets/widgets.css';
+import axios from 'axios'
 
 
 // import ElementPlus from 'element-plus';
 // import 'element-plus/theme-chalk/src/index.scss';
 
 const app = createApp(App);
+
+app.config.globalProperties.$axios = axios
 
 app.use(router);
 app.use(ElementPlus);

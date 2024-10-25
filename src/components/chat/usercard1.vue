@@ -1,5 +1,5 @@
 <template>
-    <div v-for="(item,index) in usres" :key="index">
+    <div v-for="(item,index) in users" :key="index">
         <div style="display: flex;width: 300px;margin-top: 10px;padding-left: 10px;" class="card">
             <div style="width: 20%;">
                 <el-avatar :size="40" :src="item.avatar" style="margin-left: 5px;margin-top: 2px;"/>
@@ -37,10 +37,10 @@
     let po = defineProps({
         data:Array
     })
-    var usres = ref(po.data);
+    var users = ref(po.data);
 
 
-    console.log("+++++++++++++++"+usres.value)
+    console.log("+++++++++++++++"+users.value)
 
 </script>
 

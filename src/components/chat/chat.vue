@@ -20,14 +20,14 @@
                         <el-input v-model="searchName" style="width: 70%;margin-left:10px;margin-right:10px" :prefix-icon="SearchIcon" placeholder="搜索"/>
                     </template>
                     <div>
-                        
+                        <!-- <usercard :data="searchList"></usercard> -->
                     </div>
                 </el-popover>
                 
                 <svg t="1729664230263" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5628" width="30" height="30"><path d="M512 958.016611c-119.648434 0-232.1288-46.367961-316.736783-130.559656-84.640667-84.255342-131.263217-196.255772-131.263217-315.455235 0-119.168499 46.624271-231.199892 131.232254-315.424271 84.607983-84.191695 197.088348-130.559656 316.736783-130.559656s232.1288 46.367961 316.704099 130.559656c84.67163 84.224378 131.263217 196.255772 131.263217 315.391587 0.032684 119.199462-46.591587 231.232576-131.263217 315.455235C744.1288 911.615966 631.648434 958.016611 512 958.016611zM512 129.983389c-102.623626 0-199.071738 39.743475-271.583282 111.936783-72.480581 72.12794-112.416718 168.063432-112.416718 270.079828s39.903454 197.951888 112.384034 270.047144c72.511544 72.191587 168.959656 111.936783 271.583282 111.936783 102.592662 0 199.071738-39.743475 271.583282-111.936783 72.480581-72.160624 112.416718-168.063432 112.384034-270.079828 0-102.016396-39.903454-197.919204-112.384034-270.016181C711.071738 169.759548 614.592662 129.983389 512 129.983389z" fill="#575B66" p-id="5629"></path><path d="M736.00086 480.00086 544.00086 480.00086 544.00086 288.00086c0-17.664722-14.336138-32.00086-32.00086-32.00086s-32.00086 14.336138-32.00086 32.00086l0 192L288.00086 480.00086c-17.664722 0-32.00086 14.336138-32.00086 32.00086s14.336138 32.00086 32.00086 32.00086l192 0 0 192c0 17.695686 14.336138 32.00086 32.00086 32.00086s32.00086-14.303454 32.00086-32.00086L544.00258 544.00086l192 0c17.695686 0 32.00086-14.336138 32.00086-32.00086S753.696546 480.00086 736.00086 480.00086z" fill="#575B66" p-id="5630"></path></svg>
             </div>
             <div>
-                <usercard :data="userList"></usercard>
+                <usercard1 :data="userList"></usercard1>
             </div>
         </el-aside>
         <el-main class="main" id="mian_" ref="mainContainer">
@@ -49,7 +49,7 @@
     import message from './message.vue'
     import IconSend from '../icons/IconSend.vue'
     import SearchIcon from '../icons/SearchIcon.vue'
-    import usercard from './usercard1.vue'
+    import usercard1 from './usercard1.vue'
     import {service} from '@/components/js/http.js'
     
     var data = ref(null);
@@ -61,7 +61,7 @@
     //查询出来的用户列表
     var searchList = ref([])
     //用户自己的
-    let userList = ref(null)
+    var userList = ref([])
 
 
     data.value = [{
@@ -75,9 +75,11 @@
     })
 
     onMounted(()=>{
-        getFriends()
         scrollToBottom()
-        con()
+        // con()
+
+        getFriends()
+
     })
     // 监听 data 的变化
     watch(data, () => {
@@ -122,10 +124,13 @@
         let usreId = currentUser.value.id
 
         service.get('/user/friends/'+usreId+'?name=').then(res=>{
-            console.log(res)
+            console.log(res.data.data)
             if(res.data.code === 200){
                 userList.value = res.data.data
                 console.log("-------"+JSON.stringify(userList.value))
+                nextTick(()=>{
+                    console.log('Updated userList:', userList.value)
+                })
             }
         })
     }

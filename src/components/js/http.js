@@ -36,7 +36,6 @@ service.interceptors.response.use(
     try {
       responseData = JSON.parse(response.data.data);
     } catch (e) {
-      console.log('Failed to parse response data:', e);
       return response;
     }
     if (responseData && responseData.token!== undefined) {

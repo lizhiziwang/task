@@ -37,7 +37,7 @@
 
     onMounted(()=>{
         userId.value = JSON.parse(localStorage.getItem("user")).id
-        console.log("当前chatiD:"+userId.value)
+        console.log("当前chatId:"+userId.value)
     })
 
 </script>
