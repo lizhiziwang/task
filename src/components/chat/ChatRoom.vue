@@ -15,6 +15,8 @@
     import message from './message.vue'
     import { ref, onMounted,watch,nextTick } from 'vue'
     import {service} from '@/components/js/http.js';
+    import IconSend from '../icons/IconSend.vue';
+
 
     let po = defineProps({
         target: String
@@ -26,6 +28,10 @@
     let mainContainer = ref(null)
     let messageContent = ref('')
     let websocket = null;
+    let mes = {
+        id:null,
+        message:''
+    }
 
 
     data.value = []
@@ -95,25 +101,12 @@
 */
     // 滚动到最底部的方法
     const scrollToBottom =   () => {
-        const container = mainContainer.value?.$el || mainContainer.value;
-        
-        if (container) {
-            console.log('scrollToBottom-------------------'+container)
-            // 确保内容高度超过容器高度
-            if (container.scrollHeight > container.clientHeight) {
-                // 使用 setTimeout 确保 DOM 完全更新
-                // await nextTick();
-                container.scrollTop = container.scrollHeight;
-            } else {
-            }
-        } else {
-            console.error('mainContainer is not defined');
-        }
+        mainContainer.value.scrollTop = mainContainer.value.scrollHeight;
     }
     
 
     onMounted(() => {
-        currentUser = JSON.parse(localStorage.getItem('user'))
+        currentUser = JSON.parse(sessionStorage.getItem('user'))
         console.log(currentUser)
         scrollToBottom()
     })
@@ -139,6 +132,7 @@
             }
         })
     }
+    scrollToBottom
 
     function con(){
         websocket = new WebSocket("ws://localhost:8061/ws/serverTwo?id="+currentUser.id);
@@ -148,6 +142,10 @@
         }
         // 收到消息
         websocket.onmessage = e => {
+            data.value.push(JSON.parse(e.data))
+            nextTick(() => {
+                mainContainer.value.scrollTop = mainContainer.value.scrollHeight;
+            });
             console.log(`收到消息：${e.data}`);
         }
         // 异常
@@ -162,6 +160,21 @@
     }
     function sendMessage (){
         console.log(messageContent.value)
+        mes.id = target.value
+        mes.message = messageContent.value
+        websocket.send(JSON.stringify(mes))
+        data.value.push(
+            {
+                id:null,
+                uid:currentUser.id,
+                imgUrl:currentUser.avatar,
+                msg:messageContent.value
+            }
+        )
+        messageContent.value = ''
+        nextTick(() => {
+            mainContainer.value.scrollTop = mainContainer.value.scrollHeight;
+        });
     }
  </script>
 

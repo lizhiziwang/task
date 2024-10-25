@@ -16,7 +16,7 @@
     import { useRouter } from 'vue-router'
     // import axios from 'axios';
 
-    const username = ref('kirito')
+    const username = ref('krt')
     const pwd = ref('123456')
     const router = useRouter()
     function login(){
@@ -27,8 +27,8 @@
             console.log(data)
             if(res.data.code === 200){
                 let e = JSON.parse(data)
-                localStorage.setItem('user',JSON.stringify(e.user));
-                localStorage.setItem('token',e.token);
+                sessionStorage.setItem('user',JSON.stringify(e.user));
+                sessionStorage.setItem('token',e.token);
                 console.log(e.token)
                 console.log(e.user.id)
                 router.push({path:'/chat/chat'})
