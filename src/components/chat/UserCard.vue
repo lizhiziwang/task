@@ -32,22 +32,33 @@
 </template>
 
 <script setup>
-    import { ref} from 'vue'
+    import { ref,watch,onUpdated,reactive} from 'vue'
+    // onUpdated(() => {
+    //     // $forceUpdate()
+    //     console.log("Component updated.re:"+users.value);
+    // });
 
-    let po = defineProps({
+    const po = defineProps({
         data:Array
     })
-    var users = ref(po.data);
+    var users = reactive(po.data);
 
+    console.log("+++++++-++++++++ "+users.value)
 
-    console.log("+++++++++++++++"+users.value)
+    watch(() => po.data, (newData) => {
+        users.splice(0, users.length, ...newData)
+    }, { deep: true })
 
+    onUpdated(() => {
+        console.log("Component updated. Users:", users)
+    })
+ 
 </script>
 
 
 <style>
     .card{
-        transition: transform 1s ease; /* 为宽度和高度的变化添加过渡效果 */
+        transition: transform 0.8s ease; /* 为宽度和高度的变化添加过渡效果 */
     }
     .card:hover{
         transform: scale(1.1);
