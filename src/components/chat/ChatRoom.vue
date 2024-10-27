@@ -4,8 +4,8 @@
         <div class="content" ref="mainContainer">
             <message :data="data" ></message>
         </div>
-        <div class="send">
-            <el-input v-model="messageContent" class="textIn"/>
+        <div class="send" ref="keyIn">
+            <el-input v-model="messageContent"  class="textIn"/>
             <el-button type="primary" :icon="IconSend" @click="sendMessage">发送</el-button>
         </div>
     </div>
@@ -28,6 +28,11 @@
     let mainContainer = ref(null)
     let messageContent = ref('')
     let websocket = null;
+    let keyIn = ref(null) 
+    //回车触发发送
+   // 正确添加enter事件的部分
+   
+
     let mes = {
         id:null,
         message:''
@@ -109,6 +114,12 @@
         currentUser = JSON.parse(sessionStorage.getItem('user'))
         console.log(currentUser)
         scrollToBottom()
+        keyIn.value.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                console.log('Enter key released');
+                sendMessage();
+            }
+        });
     })
 
     watch(() => po.target, (newData) => {
@@ -158,7 +169,11 @@
             console.log("连接打开");
         }
     }
-    function sendMessage (){
+    function sendMessage (e){
+        console.log(e)
+        if(messageContent.value === ''){
+            return null
+        }
         console.log(messageContent.value)
         mes.id = target.value
         mes.message = messageContent.value
