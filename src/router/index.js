@@ -12,7 +12,8 @@ import door from '../components/door.vue'
 import cm from '../components/cm.vue'
 import chat from '../components/chat/chat.vue'
 import message from '../components/chat/message.vue'
-import login from '../components/chat/login.vue'
+import login from '../components/login.vue'
+import home from '../components/home/home.vue'
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
@@ -22,6 +23,11 @@ const router = createRouter({
       path: '/3D',
       name: 'cm',
       component: cm
+    },
+    {
+      path: '/game/home',
+      name: 'home',
+      component: home
     },
     {
       path: '/chat/message',
@@ -37,19 +43,6 @@ const router = createRouter({
       path: '/chat/chat',
       name: 'chat',
       component: chat
-    },
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
     },
     {
       path:'/map',
