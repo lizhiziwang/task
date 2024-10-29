@@ -14,11 +14,18 @@ import chat from '../components/chat/chat.vue'
 import message from '../components/chat/message.vue'
 import login from '../components/login.vue'
 import home from '../components/home/home.vue'
+
+import mycard from '../components/home/mycard.vue'
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/game/mycard',
+      name: 'mycard',
+      component: mycard
+    },
     {
       path: '/3D',
       name: 'cm',

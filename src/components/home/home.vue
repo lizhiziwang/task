@@ -32,9 +32,25 @@
                             <el-tab-pane label="休闲" name="CG"   style="width: 400px"></el-tab-pane>
                             <el-tab-pane label="体育" name="SG_"   style="width: 400px"></el-tab-pane>
                             <el-tab-pane label="竞速" name="RG"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="我的" name="MY"   style="width: 400px"></el-tab-pane>
                     </el-tabs>
                 </el-scrollbar>
-
+                <div  style="display: flex;width: 100%;flex-wrap: wrap;">
+                    <MyCard v-for="item in list" :key="item" :data = 'item' style="width: 20%;"/>
+                </div>
+                <!-- 分页组件 -->
+                <div class="pagination-block" style="float: right;">
+                    <el-pagination
+                        v-model:current-page="pageParams.current"
+                        v-model:page-size="pageParams.size"
+                        :page-sizes="[10, 20, 40, 60]"
+                        :size="pageParams.size"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="pageParams.total"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        />
+                </div>
             </el-scrollbar>
         </el-main>
        
@@ -46,11 +62,92 @@
 <script setup>
     import {ref,onMounted} from 'vue'
     import MyHeader from '../home/MyHeader.vue'
+    import MyCard from '../home/MyCard.vue'
     import {service} from '@/components/js/http.js';
 
     let gameType = ref([])
     let activeName = ref('ALL')
+    let list = ref([
+        {
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    },{
+        desText:'答答答答答答答答答答答答答答',
+        gameName:'大富翁二色一看',
+        wantCount:338555,
+        isLike:false,
+        price:5896.26
+    }
+    ]) 
 
+    let pageParams = ref({
+        current:1,
+        total:10000,
+        size:20,
+    })
     onMounted(()=>{
     })
     // 获取游戏配型列表
@@ -61,6 +158,20 @@
 
                 gameType.value = re.data
                 console.log(gameType.value)
+            }
+
+        })
+    }
+    //获取游戏账号信息列表
+    function getGameAccount(){
+        service.post('/game/page',{
+
+        }).then(res=>{
+            let re = res.data
+            if(re.code === 200){
+
+                gameAccount.value = re.data
+                console.log(gameAccount.value)
             }
 
         })
@@ -101,7 +212,7 @@
         width: 300px;
     }
     :deep(.el-tabs__item){
-        width: 80px;
-        margin-right: 50px;
+        width: 130PX;
+        text-align: center;
     }
 </style>

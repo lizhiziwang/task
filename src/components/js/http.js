@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ElMessage } from 'element-plus'
 // import { useRouter } from 'vue-router'
  
 
@@ -30,7 +31,12 @@ service.interceptors.response.use(
     if (response.data && response.data.code === 403) {
       // const router = useRouter();
       // router.push({ path: '/chat/login' });
-      location.href = '/chat/login';
+      ElMessage.error('权限不足！')
+    }
+    if (response.data && response.data.code === 404) {
+      // const router = useRouter();
+      // router.push({ path: '/chat/login' });
+      ElMessage.error('资源路径错误！')
     }
     let responseData;
     try {
@@ -44,6 +50,8 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
+    ElMessage.error('服务器错误！')
+
     // 处理响应错误
     //...
     return Promise.reject(error);
