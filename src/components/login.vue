@@ -14,6 +14,7 @@
     import { ref } from 'vue'
     import {service} from '@/components/js/http.js'
     import { useRouter } from 'vue-router'
+    import fileOps from './js/file'
     // import axios from 'axios';
 
     const username = ref('kirito')
@@ -27,11 +28,12 @@
             console.log(data)
             if(res.data.code === 200){
                 // let e = JSON.parse(data)
+                data.user.avatar = fileOps.getFile + data.user.avatar;
                 sessionStorage.setItem('user',JSON.stringify(data.user));
                 sessionStorage.setItem('token',data.token);
                 console.log(data.token)
                 console.log(data.user.id)
-                router.push({path:'/chat/chat'})
+                router.push({path:'/game/home'})
             }else{
                 this.$message.error('用户名或密码错误')
             }

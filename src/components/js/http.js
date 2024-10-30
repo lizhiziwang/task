@@ -6,14 +6,14 @@ import { ElMessage } from 'element-plus'
 // 创建 Axios 实例
 const service = axios.create({
   baseURL: '/api', // 使用环境变量配置 baseURL
-  timeout: 5000, // 设置请求超时时间
+  timeout: 50000, // 设置请求超时时间
 });
  
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
     // // 在请求发送前可以进行一些配置，例如添加认证信息等
-    let token = localStorage.getItem('token')
+    let token = sessionStorage.getItem('token')
     config.headers['Authorization'] = token; // 示例：添加认证信息
     return config;
   },

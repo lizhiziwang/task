@@ -2,7 +2,7 @@
     <div class="common-layout" >
         <el-container style="height:100%">
         <el-header class="header" height="6%">
-            <MyHeader></MyHeader>
+            <MyHeader :pubVis="true" @searchTarget="search"></MyHeader>
         </el-header>
         <el-main class="home_main">
             <el-scrollbar height="100%">
@@ -16,7 +16,7 @@
                 </el-carousel>
                 <!-- tag -->
                 <el-scrollbar height="70px">
-                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick(activeName)">
                          <!-- v-for="item in gameType" :key="item"  -->
                             <el-tab-pane label="全部" name="ALL"  style="width: 10%"></el-tab-pane>
                             <el-tab-pane label="MOBA" name="MOBA"   style="width: 400px"></el-tab-pane>
@@ -35,11 +35,11 @@
                             <el-tab-pane label="我的" name="MY"   style="width: 400px"></el-tab-pane>
                     </el-tabs>
                 </el-scrollbar>
-                <div  style="display: flex;width: 100%;flex-wrap: wrap;">
+                <div  style="display: flex;width: 100%;flex-wrap: wrap;height: 80%">
                     <MyCard v-for="item in list" :key="item" :data = 'item' style="width: 20%;"/>
                 </div>
                 <!-- 分页组件 -->
-                <div class="pagination-block" style="float: right;">
+                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0" >
                     <el-pagination
                         v-model:current-page="pageParams.current"
                         v-model:page-size="pageParams.size"
@@ -145,10 +145,15 @@
 
     let pageParams = ref({
         current:1,
-        total:10000,
+        total:1000,
         size:20,
+        
     })
+
+    let searchText = '';
+    
     onMounted(()=>{
+        getGameAccount()
     })
     // 获取游戏配型列表
     function getGameType(){
@@ -164,24 +169,46 @@
     }
     //获取游戏账号信息列表
     function getGameAccount(){
-        service.post('/game/page',{
-
-        }).then(res=>{
+        service.post('/game/page',
+        {
+            "gameType": activeName.value,
+            "current":pageParams.value.current,
+            "size":pageParams.value.size,
+            "desText":searchText
+        }
+        ).then(res=>{
             let re = res.data
             if(re.code === 200){
-
-                gameAccount.value = re.data
-                console.log(gameAccount.value)
+                list.value = re.data.records
+                pageParams.value.current = re.data.current
+                pageParams.value.size = re.data.size
+                pageParams.value.total = re.data.total
+                console.log(pageParams.value)
             }
 
         })
     }
 
     // 重写为箭头函数形式的 handleClick
-    const handleClick = (tab, event) => {
-      console.log(tab);
-      console.log(event);
+    const handleClick = () => {
+      console.log(activeName.value);
+      getGameAccount()
     };
+    //分页组件相关
+    const handleSizeChange = ()=>{
+        getGameAccount()
+    }
+    const handleCurrentChange = ()=>{
+        getGameAccount()
+    }
+
+    const search = (item)=>{
+        console.log("搜索："+item )
+        searchText = item
+        
+        getGameAccount()
+    }
+    
 </script>
 
 <style scoped>

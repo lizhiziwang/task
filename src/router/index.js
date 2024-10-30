@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import map from '../components/map.vue';
 import requestAxios from '../components/requestAxios.vue'
 import service from '../components/service.vue'
@@ -14,17 +13,22 @@ import chat from '../components/chat/chat.vue'
 import message from '../components/chat/message.vue'
 import login from '../components/login.vue'
 import home from '../components/home/home.vue'
-
-import mycard from '../components/home/mycard.vue'
+import per from '../components/home/PerCenter.vue'
+import admin from '../components/home/admin.vue'
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/game/mycard',
-      name: 'mycard',
-      component: mycard
+      path: '/game/per',
+      name: 'per',
+      component: per
+    },
+    {
+      path: '/game/admin',
+      name: 'admin',
+      component: admin
     },
     {
       path: '/3D',

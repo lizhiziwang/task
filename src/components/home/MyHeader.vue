@@ -1,6 +1,6 @@
 <template>
     <div class="header_" >
-        <div class="logo" style="width: 5%">
+        <div class="logo" style="width: 5%" @click="home">
             <svg t="1730099095949" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5495" width="40" height="40"><path d="M917.4 507c-27.8-98.4-66-189.8-79.3-214.7-16.8-31.4-39.9-55.5-68.7-71.5-29.8-16.6-66.7-25.1-109.6-25.1H364c-42.9 0-79.8 8.4-109.6 25.1-28.7 16-51.8 40.1-68.7 71.5-13.4 24.9-51.5 116.3-79.3 214.7-37.1 131.4-42.1 224.8-14.7 277.7 15.2 29.3 40.4 47 73.1 51.1 13.5 1.7 26 2.5 37.7 2.5 87.6 0 127.7-44.2 163.5-83.8 21.2-23.4 41.3-45.6 70.9-57.9h166.3c29.4 12.3 46.5 33.8 66.1 58.5 18 22.7 36.7 46.1 65.9 62.6 32.8 18.5 73.3 24.5 123.9 18.1 32.7-4.1 57.9-21.8 73.1-51.1 27.3-52.9 22.3-146.3-14.8-277.7z m-29.7 254.8c-7.7 14.8-18.4 22.4-34.9 24.4-11.4 1.4-21.8 2.1-31.3 2.1-61.9 0-85-29-113.1-64.4-22-27.6-46.9-59-91.7-75.8-2.8-1.1-5.8-1.6-8.8-1.6H432.1c-3 0-6 0.5-8.8 1.6-43.2 16.2-70.4 46.3-94.4 72.8-38.7 42.7-69.2 76.4-158 65.3-16.5-2.1-27.2-9.6-34.9-24.4-20.7-40.1-14.2-125.7 18.4-241.1 27.3-96.7 64.4-184.4 75.3-204.7 25.6-47.9 68.3-70.1 134.2-70.1h295.8c65.9 0 108.6 22.3 134.2 70.1 10.9 20.3 48 108 75.3 204.7 32.7 115.4 39.2 201 18.5 241.1z" fill="#2c2c2c" p-id="5496"></path><path d="M450 444.9h-70.3v-70.5c0-11-9-20-20-20s-20 9-20 20v70.5H270c-11 0-20 9-20 20s9 20 20 20h69.7v69.5c0 11 9 20 20 20s20-9 20-20v-69.5H450c11 0 20-9 20-20s-9-20-20-20z" fill="#2c2c2c" p-id="5497"></path><path d="M640.5 427m-41.9 0a41.9 41.9 0 1 0 83.8 0 41.9 41.9 0 1 0-83.8 0Z" fill="#2c2c2c" p-id="5498"></path><path d="M739.1 525.6m-41.9 0a41.9 41.9 0 1 0 83.8 0 41.9 41.9 0 1 0-83.8 0Z" fill="#2c2c2c" p-id="5499"></path></svg>
         </div>
         <div class="title_name" style="width: 5%">
@@ -12,10 +12,11 @@
 
         <div style="width: 15%;" class="heard_search"> 
             <el-input
-                v-model="input3"
+                v-model="desText"
                 style="max-width: 600px;color: #409eff;"
                 placeholder="搜索"
-                class="input-with-select">
+                class="input-with-select"
+                @keyup.enter="search">
                 <template #append>
                     <el-button :icon="SearchIcon" type="primary"></el-button>
                 </template>
@@ -33,38 +34,183 @@
                 <template #reference>
                     <el-avatar :size="50" :src="currentUser.avatar"></el-avatar>
                 </template>
-
                 <div>
                     <div class="pro_top" style="width:100%;height:40px;border-bottom:1px solid #eee;">
                         <h2 style="text-align: center;">{{currentUser.name}}</h2>
                     </div>
-
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="per">
+                        <svg t="1730268038472" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6899" width="20" height="20"><path d="M756.385986 581.803809c42.774199-54.392818 66.561975-121.847116 66.561975-191.867866 0-171.46007-139.491984-310.952055-310.952055-310.952055s-310.952055 139.491984-310.952055 310.952055c0 70.028936 23.77345 137.490398 66.547649 191.875029-92.967368 73.611531-203.841571 230.290967-203.841571 318.646294 0 24.607444 19.951401 44.558845 44.558845 44.558845s44.558845-19.951401 44.558845-44.558845c0-64.241117 130.114406-237.993392 201.76733-269.439592 13.953803-6.121418 23.809265-18.957771 26.130124-34.020838 2.320858-15.063067-3.213181-30.264281-14.678304-40.300868-48.249911-42.252313-75.925227-103.033631-75.925227-166.760025 0-122.317837 99.516528-221.834364 221.834364-221.834364s221.834364 99.516528 221.834364 221.834364c0 63.712067-27.675316 124.493385-75.946716 166.760025-11.458983 10.037611-16.999163 25.244964-14.678304 40.309054s12.183484 27.89942 26.137287 34.020838c71.66725 31.42471 201.788819 205.175963 201.788819 269.432429 0 24.607444 19.944238 44.558845 44.558845 44.558845 24.614607 0 44.558845-19.951401 44.558845-44.558845C960.249047 812.080449 849.375867 655.408177 756.385986 581.803809z" fill="#1A1A1A" p-id="6900"></path></svg>
+                        <div style="width:5px"></div>
+                        <h3>个人中心</h3>
+                    </div>
+                    <!-- 购物车 -->
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMyWant">
+                        <svg t="1730268355916" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9915" width="20" height="20"><path d="M512.042667 193.237333a255.914667 255.914667 0 0 1 351.658666 9.728 256 256 0 0 1 10.069334 351.402667l-361.813334 362.325333-361.728-362.325333a256 256 0 0 1 361.813334-361.130667z m291.242666 70.016a170.581333 170.581333 0 0 0-234.24-6.528l-56.96 51.114667-57.002666-51.072a170.666667 170.666667 0 0 0-242.602667 239.146667L512 795.904l299.52-299.946667a170.666667 170.666667 0 0 0-8.234667-232.704z" fill="#000000" p-id="9916"></path></svg>                        <div style="width:5px"></div>
+                        <h3>我的想要</h3>
+                    </div>
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toRecord">
+                        <svg t="1730268394768" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10962" width="20" height="20"><path d="M778.24 61.44a122.88 122.88 0 0 1 122.88 122.88v655.36a122.88 122.88 0 0 1-122.88 122.88H245.76a122.88 122.88 0 0 1-122.88-122.88V184.32a122.88 122.88 0 0 1 122.88-122.88h532.48z m0 61.44H245.76a61.44 61.44 0 0 0-61.3376 57.83552L184.32 184.32v655.36a61.44 61.44 0 0 0 57.83552 61.3376L245.76 901.12h532.48a61.44 61.44 0 0 0 61.3376-57.83552L839.68 839.68V184.32a61.44 61.44 0 0 0-57.83552-61.3376L778.24 122.88zM563.2 532.48a30.72 30.72 0 0 1 0 61.44h-266.24a30.72 30.72 0 0 1 0-61.44h266.24z m163.84-225.28a30.72 30.72 0 0 1 0 61.44h-430.08a30.72 30.72 0 0 1 0-61.44h430.08z" fill="#131415" p-id="10963"></path></svg>
+                        <div style="width:5px"></div>
+                        <h3>购买记录</h3>
+                    </div>
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMessage">
+                        <svg t="1730268431615" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12907" width="20" height="20"><path d="M469.333333 85.333333h85.333334v85.333334h-85.333334z" fill="#323233" p-id="12908"></path><path d="M512 938.666667a170.752 170.752 0 0 1-165.290667-128l91.392 0.042666a85.333333 85.333333 0 0 0 147.797334 0h91.392A170.752 170.752 0 0 1 512 938.666667zM512 128a278.186667 278.186667 0 0 1 277.248 255.146667L810.666667 640l102.4 136.533333a21.333333 21.333333 0 0 1-17.066667 34.133334H128a21.333333 21.333333 0 0 1-17.066667-34.133334L213.333333 640l21.418667-256.853333A278.186667 278.186667 0 0 1 512 128z m0 85.333333a192.853333 192.853333 0 0 0-191.274667 167.850667l-0.938666 9.002667-23.466667 281.386666L256 725.333333h512l-40.32-53.76-23.466667-281.386666A192.853333 192.853333 0 0 0 512 213.333333z" fill="#323233" p-id="12909"></path></svg>
+                        <div style="width:5px"></div>
+                        <h3>我的消息</h3>
+                    </div>
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toAdminPage">
+                        <svg t="1730268488324" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15136" width="20" height="20"><path d="M881.277 512c0-44.845 19.861-85.167 51.471-113.064 14.694-12.967 18.4-34.383 8.483-51.286l-70.568-120.292c-9.686-16.511-29.496-23.989-47.756-18.242-15.148 4.768-31.307 7.344-48.084 7.344-75.071 0-137.788-51.579-152.902-120.374C617.805 77.343 601.188 64 581.998 64H442.004c-19.19 0-35.807 13.343-39.925 32.086-15.114 68.795-77.831 120.374-152.904 120.374-16.775 0-32.932-2.576-48.079-7.344-18.259-5.747-38.069 1.73-47.756 18.241L82.767 347.649c-9.917 16.903-6.211 38.32 8.483 51.288 31.611 27.897 51.47 68.218 51.47 113.063 0 44.844-19.859 85.166-51.47 113.063-14.694 12.968-18.4 34.384-8.483 51.288l70.571 120.292c9.686 16.511 29.497 23.988 47.756 18.241 15.147-4.768 31.304-7.344 48.079-7.344 75.075 0 137.791 51.578 152.905 120.374C406.195 946.657 422.813 960 442.003 960H582c19.19 0 35.808-13.343 39.925-32.086 15.113-68.796 77.829-120.374 152.902-120.374 16.776 0 32.933 2.576 48.081 7.344 18.26 5.748 38.07-1.73 47.756-18.241l70.569-120.291c9.917-16.904 6.211-38.321-8.484-51.289-31.611-27.898-51.472-68.22-51.472-113.063zM824.37 749.075a224.648 224.648 0 0 0-49.543-5.535c-29.523 0-58.211 5.657-85.266 16.814-26.204 10.806-49.75 26.288-69.984 46.015-20.347 19.838-36.344 42.99-47.547 68.815A214.314 214.314 0 0 0 564.251 896H459.75a213.987 213.987 0 0 0-7.779-20.816c-11.203-25.825-27.2-48.978-47.547-68.815-20.234-19.728-43.78-35.209-69.984-46.015-27.056-11.157-55.744-16.814-85.267-16.814a224.63 224.63 0 0 0-49.541 5.535l-52.341-89.218a217.351 217.351 0 0 0 28.408-37.07A213.395 213.395 0 0 0 206.72 512a213.407 213.407 0 0 0-31.02-110.788 217.39 217.39 0 0 0-28.408-37.07l52.341-89.218a224.683 224.683 0 0 0 49.541 5.535c29.523 0 58.211-5.657 85.267-16.814 26.204-10.806 49.75-26.287 69.984-46.015 20.347-19.838 36.344-42.99 47.547-68.815a214.248 214.248 0 0 0 7.779-20.816h104.5a213.873 213.873 0 0 0 7.779 20.815c11.203 25.824 27.2 48.977 47.547 68.815 20.234 19.728 43.78 35.209 69.983 46.016 27.056 11.157 55.743 16.814 85.266 16.814a224.65 224.65 0 0 0 49.544-5.535l52.338 89.217A217.344 217.344 0 0 0 848.3 401.21a213.396 213.396 0 0 0-31.022 110.789A213.39 213.39 0 0 0 848.3 622.786a217.274 217.274 0 0 0 28.409 37.071l-52.339 89.218z" p-id="15137"></path><path d="M512 320c-106.039 0-192 85.961-192 192s85.961 192 192 192 192-85.961 192-192-85.961-192-192-192z m90.51 282.51C578.334 626.686 546.19 640 512 640s-66.334-13.314-90.51-37.49C397.314 578.333 384 546.19 384 512s13.314-66.334 37.49-90.51C445.666 397.314 477.81 384 512 384s66.334 13.314 90.51 37.49C626.686 445.666 640 477.81 640 512s-13.314 66.333-37.49 90.51z" p-id="15138"></path></svg>
+                        <div style="width:5px"></div>
+                        <h3>管理后台</h3>
+                    </div>
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="logout">
+                        <svg t="1730268544105" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16141" width="20" height="20"><path d="M957.44 716.8c-22.528 0-40.96 18.432-40.96 40.96v92.16c0 33.792-27.648 61.44-61.44 61.44H174.08c-33.792 0-61.44-27.648-61.44-61.44V168.96c0-33.792 27.648-61.44 61.44-61.44h680.96c33.792 0 61.44 27.648 61.44 61.44v40.96c0 22.528 18.432 40.96 40.96 40.96s40.96-18.432 40.96-40.96v-40.96c0-78.848-64.512-143.36-143.36-143.36H174.08C95.232 25.6 30.72 90.112 30.72 168.96v680.96c0 78.848 64.512 143.36 143.36 143.36h680.96c78.848 0 143.36-64.512 143.36-143.36v-92.16c0-22.528-18.432-40.96-40.96-40.96z" fill="#333333" p-id="16142"></path><path d="M807.936 633.344c8.192 8.192 18.432 11.776 29.184 11.776s20.992-4.096 29.184-11.776l120.32-120.32 0.512-0.512 2.56-2.56c0.512-0.512 1.024-1.024 1.024-1.536 0.512-0.512 1.024-1.024 1.024-1.536 0.512-0.512 1.024-1.024 1.024-2.048 0.512-0.512 0.512-1.024 1.024-1.536 0.512-0.512 0.512-1.536 1.024-2.048 0.512-0.512 0.512-1.024 1.024-1.536 0.512-0.512 0.512-1.536 0.512-2.048 0-0.512 0.512-1.024 0.512-2.048 0-0.512 0.512-1.536 0.512-2.048 0-0.512 0.512-1.024 0.512-2.048s0-1.536 0.512-2.56v-1.536c0.512-2.56 0.512-5.632 0-8.192v-1.536c0-1.024 0-1.536-0.512-2.56 0-0.512-0.512-1.024-0.512-2.048 0-0.512-0.512-1.536-0.512-2.048 0-0.512-0.512-1.024-0.512-2.048 0-0.512-0.512-1.536-0.512-2.048 0-0.512-0.512-1.024-1.024-1.536-0.512-0.512-0.512-1.536-1.024-2.048-0.512-0.512-0.512-1.024-1.024-1.536-0.512-0.512-0.512-1.024-1.024-2.048-0.512-0.512-1.024-1.024-1.024-1.536-0.512-0.512-0.512-1.024-1.024-1.536-0.512-1.024-1.536-2.048-2.56-2.56l-0.512-0.512-120.32-120.32c-15.872-15.872-41.984-15.872-57.856 0-15.872 15.872-15.872 41.984 0 57.856l50.176 50.176h-344.064c-22.528 0-40.96 18.432-40.96 40.96s18.432 40.96 40.96 40.96h344.064l-50.176 50.176c-16.384 17.92-16.384 43.52-0.512 59.904z" fill="#333333" p-id="16143"></path></svg>
+                        <div style="width:5px"></div>
+                        <h3 style="text-align: center;color:red;">退出登录</h3>
+                    </div>
                 </div>
             </el-popover>
 
             <!-- <el-avatar :size="50" :src="currentUser.avatar"></el-avatar> -->
         </div>
-        <div class="pub_button">
-            <el-button type="primary"  :icon="PubIcon" round="true">发布</el-button>
+        <div class="pub_button" @click="isOpen=true" v-if="isVisible">
+            <el-button type="primary"  :icon="PubIcon">发布</el-button>
         </div>
     </div>
+    <!-- 发布 -->
+    <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false">
+            <div style="display: flex;align-items: center;height:10%">
+                <el-avatar :size="50" :src="currentUser.avatar" style="margin-right:2%"></el-avatar>
+                <span style="font-size:30px">{{currentUser.name}}</span>
+            </div>
+            <div>
+                <el-form
+                    ref="ruleFormRef"
+                    style="max-width: 600px"
+                    :model="ruleForm"
+                    :rules="rules"
+                    label-width="80px"
+                    class="demo-ruleForm"
+                    status-icon>
+                    <el-form-item label="游戏名称" prop="gameName">
+                        <el-input v-model="ruleForm.gameName" />
+                    </el-form-item>
+                    <el-form-item label="游戏ID" prop="gameId">
+                        <el-input v-model="ruleForm.gameId" />
+                    </el-form-item>
+                    <el-form-item label="类型" prop="gameType">
+                        <el-select v-model="ruleForm.gameType" placeholder="请选择">
+                            <el-option v-for="item in types" :key="item" label="Zone one" value="shanghai" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="期望价格" prop="price">
+                        <el-input-number v-model="ruleForm.price"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="账号介绍" prop="desText">
+                        <el-input v-model="ruleForm.desText" type="textarea"/>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <template #footer>
+                <div style="flex: auto">
+                    <el-button @click="isOpen = false">取消</el-button>
+                    <el-button type="primary" @click="save">发布</el-button>
+                </div>
+            </template>
+
+    </el-drawer>
 </template>
 
 <script setup>
-    import {ref,onMounted} from 'vue'
+    import {ref,onMounted,defineProps,reactive} from 'vue'
     import PubIcon from '../icons/PubIcon.vue';
     import SearchIcon from '../icons/SearchIcon.vue';
     import fileOps from '../js/file'
+    import { useRouter } from 'vue-router'
+    import { ElMessageBox } from 'element-plus'
 
+    const props = defineProps({
+        pubVis: Boolean
+    })
+    let ruleFormRef = ref(null)
+
+    const emit = defineEmits({
+        searchTarget:(item)=>{
+            return item;
+        }
+    })
+    let ruleForm = ref(
+        {
+            gameName:'',
+            gameId:'',
+            desText:'',
+            gameType:'',
+            price:0.0
+        }
+    )
+        
+    let desText = ref('')
+
+
+    const router = useRouter();
 
     console.log("文件base地址："+fileOps.getFile)
     let currentUser = ref({});
+
+    let isOpen = ref(false); 
+    let isVisible = ref(props.pubVis);
+
     onMounted(() => {
+        currentUser.value = JSON.parse(sessionStorage.getItem('user'));
     })
-    currentUser.value = {
-        avatar:fileOps.getFile + 'tx.jfif',
-        name:'kirito'
+
+    function logout(){
+        sessionStorage.removeItem('token')
+        router.push('/game/login')
     }
+    const home = () => router.push('/game/home')
+    const per = () => router.push('/game/per')
+    const toAdminPage = ()=>router.push('/game/admin');
+    const toMyWant = ()=>router.push('/game/myWant');
+    const toMessage = ()=>router.push('/chat/chat');
+    const toRecord = () => router.push('/game/record');
+    const confirmClick = ()=>{
+        ElMessageBox.confirm('请确认信息是否正确，是否提交？')
+            .then(() => {
+               isOpen.value = false
+            })
+    }
+    function search(){
+        console.log("触发"+desText.value)
+        emit('searchTarget',desText.value)
+        desText.value = ''
+    }
+
+    const handleClose = ()=>{
+        ElMessageBox.confirm('发布内容还未保存，是否确认离开','提示').then(()=>{isOpen.value = false})
+    }
+
+    const rules = reactive({
+        gameName:[
+            { required: true, message: '请输入游戏的名称', trigger: 'blur' },
+            { min: 1, message: '游戏名不能为空', trigger: 'blur' },
+        ],
+        gameId:[
+            { required: true, message: '请输入游戏ID', trigger: 'blur' },
+            { min: 1, message: '游戏ID不能为空', trigger: 'blur' },
+        ],
+        desText:[
+            { required: true, message: '请输入对账号的简单介绍', trigger: 'blur' },
+            { min: 20,max:100, message: '账号介绍最少20字', trigger: 'blur' },
+        ],
+        gameType:[
+            { required: true, message: '请选择游戏类型', trigger: 'blur' },
+            { min: 1, message: '游戏类型不能为空', trigger: 'blur' },
+        ],
+        price:[
+            { required: true, message: '请选择游戏类型', trigger: 'blur' }
+        ]
+    })
 </script>
 
 <style>
@@ -100,5 +246,11 @@
     .heard_search{
         position: absolute;
         right: 18%;
+    }
+    .c202410301423:hover{
+        cursor: pointer;
+    }
+    .logo:hover{
+        cursor: pointer;
     }
 </style>
