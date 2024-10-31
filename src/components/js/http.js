@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
  
-
+let router = new useRouter();
 // 创建 Axios 实例
 const service = axios.create({
   baseURL: '/api', // 使用环境变量配置 baseURL
@@ -50,7 +50,12 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
-    ElMessage.error('服务器错误！')
+    if(error.status === 403){
+      ElMessage.error('请重新登录！')
+      location='/game/login'
+    }
+    console.log(error)
+    
 
     // 处理响应错误
     //...

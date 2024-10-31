@@ -205,8 +205,8 @@
     const search = (item)=>{
         console.log("搜索："+item )
         searchText = item
-        
         getGameAccount()
+        searchText = ''
     }
     
 </script>

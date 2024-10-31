@@ -1,7 +1,9 @@
 <template>
     <div>
         <el-card class="box-card">
-            <div class="top-card"></div>
+            <div class="top-card">
+                <el-image style="width: 100%; height: 100%" :src="fileOps.getFile+data.showImg" fit="fill" />
+            </div>
             <div class="bottom-card">
                 <div style="width:100%;height:30%;display:flex;align-items:center;">
                     <span class="card-title" style="font-size: 18px;width:60%;color:#b24b3d;">{{data.gameName}}</span>
@@ -27,6 +29,7 @@
     import {ref,defineProps} from 'vue'
     import {service} from '@/components/js/http.js';
     import { ElMessage } from 'element-plus'
+    import fileOps from '../js/file'
 
     let po = defineProps({
         data:Object

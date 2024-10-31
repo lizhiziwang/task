@@ -2,7 +2,7 @@
     <div class="common-layout" >
         <el-container style="height:100%">
             <el-header class="header" height="6%">
-                <MyHeader pubVis="true"></MyHeader>
+                <MyHeader :pubVis="true"></MyHeader>
             </el-header>
             <el-main class="home_main_per" style="height:94%">
                 <el-scrollbar height="100%">

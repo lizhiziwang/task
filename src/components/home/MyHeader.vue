@@ -78,7 +78,7 @@
         </div>
     </div>
     <!-- 发布 -->
-    <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false">
+    <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
             <div style="display: flex;align-items: center;height:10%">
                 <el-avatar :size="50" :src="currentUser.avatar" style="margin-right:2%"></el-avatar>
                 <span style="font-size:30px">{{currentUser.name}}</span>
@@ -99,12 +99,29 @@
                         <el-input v-model="ruleForm.gameId" />
                     </el-form-item>
                     <el-form-item label="类型" prop="gameType">
-                        <el-select v-model="ruleForm.gameType" placeholder="请选择">
-                            <el-option v-for="item in types" :key="item" label="Zone one" value="shanghai" />
+                        <el-select v-model="ruleForm.gameType" placeholder="请选择" >
+                            <el-option v-for="(item,index) in gameTypesList" :key="index" :label="item.name" :value="item.name" >
+                            </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="期望价格" prop="price">
                         <el-input-number v-model="ruleForm.price"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="展示图" prop="showImg">
+                        <el-upload
+                            class="avatar-uploader"
+                            action="#"
+                            :show-file-list="true"
+                            :on-success="handleAvatarSuccess"
+                            accept=".png,.jpe,.jpeg"
+                            :http-request="handleUpload"
+                            :limit="1"
+                            :before-upload="handleChange"
+                            ref="uploadBanner"
+                        >
+                            <img v-if="showImg_!=''" :src="showImg_" class="avatar" />
+                            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                        </el-upload>
                     </el-form-item>
                     <el-form-item label="账号介绍" prop="desText">
                         <el-input v-model="ruleForm.desText" type="textarea"/>
@@ -128,6 +145,10 @@
     import fileOps from '../js/file'
     import { useRouter } from 'vue-router'
     import { ElMessageBox } from 'element-plus'
+    import { Plus, Service } from '@element-plus/icons-vue'
+    import {service} from '@/components/js/http.js';
+    import { ElMessage } from 'element-plus'
+    import { ElLoading } from 'element-plus'
 
     const props = defineProps({
         pubVis: Boolean
@@ -145,20 +166,23 @@
             gameId:'',
             desText:'',
             gameType:'',
-            price:0.0
+            price:0.0,
+            showImg:''
         }
     )
+    let showImg_ = ref('')
+    let uploadBanner = ref(null)
         
     let desText = ref('')
 
-
     const router = useRouter();
 
-    console.log("文件base地址："+fileOps.getFile)
     let currentUser = ref({});
 
     let isOpen = ref(false); 
     let isVisible = ref(props.pubVis);
+
+    var gameTypesList = ref([])
 
     onMounted(() => {
         currentUser.value = JSON.parse(sessionStorage.getItem('user'));
@@ -183,11 +207,17 @@
     function search(){
         console.log("触发"+desText.value)
         emit('searchTarget',desText.value)
-        desText.value = ''
     }
 
     const handleClose = ()=>{
-        ElMessageBox.confirm('发布内容还未保存，是否确认离开','提示').then(()=>{isOpen.value = false})
+        ElMessageBox.confirm('发布内容还未保存，是否确认离开','提示',{
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(()=>{
+            isOpen.value = false
+            ruleFormRef.value.resetFields()
+        })
     }
 
     const rules = reactive({
@@ -210,8 +240,93 @@
         price:[
             { required: true, message: '请选择游戏类型', trigger: 'blur' }
         ]
+        ,
+        showImg:[
+            { required: false, message: '请上传账号展示图', trigger: 'blur' },
+        ]
     })
+    const handleAvatarSuccess = (a,b,c)=>{
+        console.log("+++++++++"+a)
+    }
+    const handleChange = (rawFile) => {
+        if (rawFile.type !== "image/jpeg" && rawFile.type !== "image/png") {
+            ElMessage.error("只能上传jpeg/jpg/png图片");
+            return false;
+        } else if (rawFile.size / 1024 / 1024 > 10) {
+            ElMessage.error("上传图片最大不超过10MB!");
+            return false;
+        }
+        return true;
+    };
+
+    const handleUpload = (file) => {
+        let fd = new FormData();
+        fd.append("files", file.file);
+            // 这里是请求上传接口
+        service.post('/game/files',fd)
+            .then(res=>{
+                if(res.data.code === 200){
+                    ruleForm.value.showImg = res.data.data[0]
+                    showImg_.value = fileOps.getFile + ruleForm.value.showImg 
+                    console.log("aewef"+ruleForm.showImg)
+                }else{
+                    ElMessage.error(result.message);
+                    uploadBanner.value.handleRemove(file);
+                }
+            })
+
+    };
+    //用户发布账号交易信息
+    const save = ()=>{
+        if (!ruleFormRef) {
+            return;
+        }
+        ruleFormRef.value.validate(function (valid, fields) {
+            if (valid) {
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '拼命加载中...',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                })
+                service.post('/game',ruleForm.value).then(res=>{
+                    let data = res.data;
+                    loading.close()
+                    
+                    if(data.code===200 && data.data){
+                        ElMessage.success('发布成功')
+                        isOpen.value = false
+                        ruleFormRef.value.resetFields()
+                        showImg_.value = ''
+                    }else{
+                        ElMessage.error('发布失败')
+                    }
+
+                })
+            } else {
+                console.log('error submit!', fields);
+                ElMessage.error('发布失败')
+                return;
+            }
+        });
+    }
+
+    const init = (e)=>{
+        console.log(e)
+
+        service.get('/game/type').then(res=>{
+            if(res.data.code === 200){
+                gameTypesList.value = res.data.data
+            }
+        })
+    }
 </script>
+<style scoped>
+    .avatar-uploader .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>
 
 <style>
     .header_{
@@ -253,4 +368,24 @@
     .logo:hover{
         cursor: pointer;
     }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #CECECE;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: var(--el-transition-duration-fast);
+        }
+
+        .avatar-uploader .el-upload:hover {
+        border-color: var(--el-color-primary);
+        }
+
+        .el-icon.avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        text-align: center;
+        }
 </style>
