@@ -25,7 +25,7 @@
 
         <div class="touxiang">
             <el-popover
-                placement="bottom-start"
+                placement="bottom"
                 :width="150"
                 trigger="hover"
                 content="this is content, this is content, this is content"
@@ -194,7 +194,18 @@
     }
     const home = () => router.push('/game/home')
     const per = () => router.push('/game/per')
-    const toAdminPage = ()=>router.push('/game/admin');
+    const toAdminPage = ()=>{
+        service.get('/user/toAdmin/'+currentUser.value.id).then(res=>{
+            if(res.data.code==200 && res.data.data){
+                ElMessage.success('管理员登录成功')
+                router.push('/game/admin')
+            }else{
+                ElMessage.error('非管理员账号，无法进入')
+            }
+        })
+
+        
+    };
     const toMyWant = ()=>router.push('/game/myWant');
     const toMessage = ()=>router.push('/chat/chat');
     const toRecord = () => router.push('/game/record');

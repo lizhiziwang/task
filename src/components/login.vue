@@ -34,8 +34,6 @@
                 console.log(data.token)
                 console.log(data.user.id)
                 router.push({path:'/game/home'})
-            }else{
-                this.$message.error('用户名或密码错误')
             }
             console.log(res)
         })

@@ -9,7 +9,7 @@ export default defineConfig({
   //   // open: true, //配置自动启动浏览器 
     proxy: {
       '/api': {
-        target: 'http://localhost:8061', //对应自己的接口
+        target: 'http://localhost:8062', //对应自己的接口
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
