@@ -43,7 +43,7 @@
                             style="width: 100%"
                             />
                         </el-col>
-                        <el-col class="text-center" :span="1" style="margin: 0 0.5rem">-</el-col>
+                        <el-col class="text-center" :span="1" style="margin: 0 0.5rem">至</el-col>
                         <el-col :span="10">
                             <el-date-picker
                                 v-model="searchUser.endTime"

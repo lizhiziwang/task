@@ -65,7 +65,7 @@
 <script setup>
     import MyHeader from '../home/MyHeader.vue'
     import { ref ,markRaw} from 'vue'
-    import UserAdmin from './userAdmin.vue'
+    import UserAdmin from './UserAdmin.vue'
     import AccountAdmin from './AccountAdmin.vue'
 
     let currentComponent = ref(markRaw(UserAdmin))

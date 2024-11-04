@@ -1,7 +1,58 @@
 <template>
     <div>
+    <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
+        <el-scrollbar height="100%">
+            <div style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px">
+                <el-popover
+                    placement="top-start"
+                    title="添加好友"
+                    trigger="hover"
+                    width="200"
+                >
+                    <template #reference>
+                        <el-avatar :size="50" :src="fileOps.getFile + dealObj.avatar" style="margin-right:2%"></el-avatar>
+                    </template>
+
+                    <el-button type="primary" link @click="addFriend(data.pubUser)">添加</el-button>对方为您的好友，快速的了解该账号。
+                </el-popover>
+                <span style="font-size:30px">{{dealObj.name}}</span>
+
+            </div>
+
+            <div class="card-body">
+                <el-descriptions
+                    class="margin-top"
+                    title="游戏账号信息"
+                    :column="1"
+                    border>
+                    <el-descriptions-item align="center" label-align="center" label="展示图" :rowspan="1">
+                        <el-image :src="fileOps.getFile+data.showImg" style="width: 100px; height: 100px"/>
+                    </el-descriptions-item>  
+                     
+                    <el-descriptions-item align="center" label-align="center" label="游戏名" :rowspan="1">{{data.gameName}}</el-descriptions-item>    
+                    <el-descriptions-item align="center" label-align="center" label="游戏ID" :rowspan="1">{{data.gameId}}</el-descriptions-item>    
+                    <el-descriptions-item align="center" label-align="center" label="游戏类型" :rowspan="1">{{data.gameType}}</el-descriptions-item>  
+                    <el-descriptions-item align="center" label-align="center" label="想要人数" :rowspan="1">{{data.wantNum}}</el-descriptions-item> 
+                    <el-descriptions-item align="center" label-align="center" label="账号介绍" :rowspan="1">{{data.desText}}</el-descriptions-item> 
+                    <el-descriptions-item align="center" label-align="center" label="金额" :rowspan="1"><h4>￥{{data.price}}</h4></el-descriptions-item> 
+                    
+                </el-descriptions>
+            </div>
+            <div>
+                <h4>视频展示</h4>
+                <video v-for="item in data.videoList" :key="item" :src="fileOps.getFile+item" autoplay controls></video>
+            </div>
+        </el-scrollbar>
+        <template #footer>
+            <div style="flex: auto">
+                <el-button @click="close">添加想要</el-button>
+                <el-button type="primary" @click="addOrder">下单 </el-button>
+            </div>
+        </template>
+    </el-drawer>
+
         <el-card class="box-card">
-            <div class="top-card">
+            <div class="top-card" @click="opendraw">
                 <el-image style="width: 100%; height: 100%" :src="fileOps.getFile+data.showImg" fit="fill" />
             </div>
             <div class="bottom-card">
@@ -23,20 +74,40 @@
             </div>
         </el-card>
     </div>
+
+    
 </template>
 
 <script setup>
     import {ref,defineProps} from 'vue'
     import {service} from '@/components/js/http.js';
-    import { ElMessage } from 'element-plus'
+    import { ElMessage, ElMessageBox} from 'element-plus'
     import fileOps from '../js/file'
 
     let po = defineProps({
         data:Object
     })
+    const currentUser = JSON.parse(sessionStorage.getItem('user'))
+
+    let isOpen = ref(false)
     
     var data = ref(po.data)
-    console.log(data.value.name)
+    let dealObj = ref({})
+    
+
+
+    const opendraw = ()=>{
+        isOpen.value = true
+    }
+    function init(){
+        console.log(data.value)
+        service.get('/user/ava/'+data.value.pubUser).then(res=>{
+            dealObj.value = res.data.data
+        })
+
+        data.value.videoList = JSON.parse(data.value.desFile).video
+        console.log(data.value.videoList)
+    }
 
     function doLike(){
         const currentUserId = JSON.parse(sessionStorage.getItem('user')).id
@@ -64,6 +135,65 @@
             
         })
     }
+    const close = ()=>{
+        doLike()
+        isOpen.value = false
+    }
+
+    const addOrder = ()=>{
+        service.post('/order?accIds='+data.value.id).then(res=>{
+            if(res.data.code === 200&& res.data.data){
+                ElMessage({
+                    type: 'success',
+                    message: '下单成功！'
+                })
+                ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+            }else if(res.data.code === 200&& (!res.data.data)){
+                ElMessage({
+                    type: 'success',
+                    message: res.data.message
+                })
+            }
+        })
+    }
+
+    const handleClose = ()=>{
+        ElMessageBox.confirm('您还没有购买该账号，是否确认离开','提示',{
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(()=>{
+            isOpen.value = false
+        })
+    }
+    const addFriend = (id)=>{
+        ElMessageBox.confirm('是否添加该用户为好友','提示',{
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(()=>{
+            service.post('/user/fri/'+currentUser.id+"?receiver="+id).then(res=>{
+                console.log(res.data.data)   
+                
+                if(res.data.code == 200&&res.data.data){
+                    ElMessage({
+                        type: 'success',
+                        message: '添加成功'
+                    })
+                }else if(res.data.code == 200&&(res.data.data===false)){
+                    console.log("已存在")
+                    ElMessage({
+                        type: 'error',
+                        message: res.data.message
+                    })
+                }
+            })
+        })
+    }
 
 </script>
 
@@ -89,5 +219,9 @@
     :deep(.bottom-card){
         width: 100%;
         height: 120px;
+    }
+    .card-body{
+        width: 100%;
+        margin-top: 50px;
     }
 </style>
