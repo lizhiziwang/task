@@ -8,15 +8,15 @@
             <el-scrollbar height="100%">
                 <el-carousel indicator-position="outside">
                     <el-carousel-item v-for="item in 4" :key="item">
-                        <!-- <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif" style="width: 100%"></el-image>
+                        <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif" style="width: 100%"></el-image>
                         <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif"></el-image>
                         <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif"></el-image>
-                        <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif"></el-image> -->
+                        <el-image fit="fill" src="http://localhost:8061/file/get/game_wk.jfif"></el-image>
                     </el-carousel-item>
                 </el-carousel>
                 <!-- tag -->
                 <el-scrollbar height="70px">
-                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick(activeName)">
+                    <el-tabs v-model="activeName" class="demo-tabs" @tab-change="handleClick()">
                          <!-- v-for="item in gameType" :key="item"  -->
                             <el-tab-pane label="全部" name="ALL"  style="width: 10%"></el-tab-pane>
                             <el-tab-pane label="MOBA" name="MOBA"   style="width: 400px"></el-tab-pane>
@@ -39,7 +39,7 @@
                     <MyCard v-for="item in list" :key="item" :data = 'item' style="width: 20%;"/>
                 </div>
                 <!-- 分页组件 -->
-                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0" >
+                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0">
                     <el-pagination
                         v-model:current-page="pageParams.current"
                         v-model:page-size="pageParams.size"
@@ -191,8 +191,8 @@
 
     // 重写为箭头函数形式的 handleClick
     const handleClick = () => {
-      console.log(activeName.value);
-      getGameAccount()
+        console.log(activeName.value);
+        getGameAccount()
     };
     //分页组件相关
     const handleSizeChange = ()=>{

@@ -27,7 +27,7 @@ service.interceptors.response.use(
   (response) => {
     // 在响应返回后，可以进行一些处理，例如判断是否需要更新令牌等
     //...
-    console.log(response.data);
+    console.log(response);
     if (response.data && response.data.code === 403) {
       // const router = useRouter();
       // router.push({ path: '/chat/login' });

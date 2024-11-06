@@ -75,6 +75,8 @@
         </el-card>
     </div>
 
+    <!-- 下单购买 -->
+ 
     
 </template>
 
@@ -83,6 +85,7 @@
     import {service} from '@/components/js/http.js';
     import { ElMessage, ElMessageBox} from 'element-plus'
     import fileOps from '../js/file'
+
 
     let po = defineProps({
         data:Object
@@ -93,6 +96,7 @@
     
     var data = ref(po.data)
     let dealObj = ref({})
+    let diaOpen = ref(true)
     
 
 
@@ -150,11 +154,11 @@
                 ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
-                    type: 'warning'
+                    type: 'success'
                 })
             }else if(res.data.code === 200&& (!res.data.data)){
                 ElMessage({
-                    type: 'success',
+                    type: 'warning',
                     message: res.data.message
                 })
             }
