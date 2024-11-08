@@ -35,8 +35,86 @@
                         </el-descriptions-item>
                     </el-descriptions>
                     <div class="mywant">
-                        <h4>我的想要</h4>
-
+                        <h4>我的想要(购物车)</h4>
+                        <el-table :data="myWant" style="width: 100%" height="550px">
+                            <el-table-column type="index" width="70"  label="序号"></el-table-column>
+                            <el-table-column prop="gameName" label="游戏名称" ></el-table-column>
+                            <el-table-column align="center"  label="展示图" min-width="120">
+                                <template #default="scope">
+                                    <el-image
+                                        style="width: 140px; height: 80px"
+                                        :src="fileOps.getFile+scope.row.showImg"/>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="gameId" label="游戏账号" align="center"></el-table-column>
+                            <el-table-column prop="desText" label="账号介绍" width="300" align="center"></el-table-column>
+                            <el-table-column prop="price" label="价格"></el-table-column>
+                            <el-table-column prop="createTime" label="出售时间"></el-table-column>
+                            <el-table-column align="center" fixed="right" label="操作" min-width="120">
+                                <template #default="scope">
+                                    <el-button link type="primary" size="small" @click="addOrder(scope.row)">
+                                        下单
+                                    </el-button>
+                                    <el-button link type="primary" size="small" @click="gameAccountInfo_(scope.row)">详情</el-button>
+                                    <el-button link type="primary" size="small" @click="deleteWant(scope.row.id)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div style="display: flex; justify-content: flex-end;">
+                            <el-pagination
+                                v-model:current-page="wantPageParams.current"
+                                v-model:page-size="wantPageParams.size"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :size="wantPageParams.size"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="wantPageParams.total"
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                />
+                        </div>
+                    </div>
+                    <div class="buyRecord">
+                        <h4>订单记录</h4>
+                        <el-table :data="buyRecords" style="width: 100%" height="550px">
+                            <el-table-column type="index" width="70"  label="序号"></el-table-column>
+                            <el-table-column prop="id" width="200" label="订单号"></el-table-column>
+                            <el-table-column align="center"  label="展示图" min-width="120">
+                                <template #default="scope">
+                                    <el-image
+                                        style="width: 140px; height: 80px"
+                                        :src="fileOps.getFile+scope.row.showImg"/>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="state_" label="订单状态"></el-table-column>
+                            <el-table-column prop="createTime" label="下单时间"></el-table-column>
+                            <el-table-column prop="sum" label="订单金额"></el-table-column>
+                            <el-table-column align="center" fixed="right" label="操作" min-width="120">
+                                <template #default="scope">
+                                    <el-button link type="primary" size="small" @click="gameAccountInfo_(scope.row)">详情</el-button>
+                                    <el-button link 
+                                        v-if="scope.row.state !== 'NOPAID'&& scope.row.state !== 'CANCELED'" 
+                                        type="primary" size="small" @click="deleteWant(scope.row.id)">退款</el-button>
+                                    <el-button link 
+                                        v-if="scope.row.state === 'DELIVERED'" 
+                                        type="primary" size="small" @click="deleteWant(scope.row.id)">签收</el-button>
+                                    <el-button link 
+                                        v-if="scope.row.state === 'NOPAID'" 
+                                        type="primary" size="small" @click="deleteWant(scope.row.id)">支付</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div style="display: flex; justify-content: flex-end;">
+                            <el-pagination
+                                v-model:current-page="RecordPageParams.current"
+                                v-model:page-size="RecordPageParams.size"
+                                :page-sizes="[10, 20, 40, 60]"
+                                :size="RecordPageParams.size"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="RecordPageParams.total"
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                />
+                        </div>
                     </div>
 
                 </el-scrollbar>
@@ -169,6 +247,18 @@
                 </div>
             </template>
         </el-drawer>
+        <!-- 游戏账号详细信息 -->
+
+        <el-drawer v-model="gameAccountInfo" size="45%" @open="init2" :with-header="false">
+            <ProductDet :data="currentgameAccountInfo_" :dealObj="dealObj" ></ProductDet>
+        </el-drawer>
+        <el-dialog
+            v-model="diaOpen"
+            width="600"
+            align-center
+        >
+            <order :order="orderObj" @closeTarget="diaOpen = false"></order>
+        </el-dialog>
 
     </div>
 </template>
@@ -179,6 +269,8 @@
     import { ref, onMounted } from 'vue'
     import { ElMessage, ElMessageBox,ElLoading} from 'element-plus'
     import {service} from '@/components/js/http.js';
+    import ProductDet from './ProductDet.vue'
+    import order from './order.vue'
 
     let currentUser = ref({})
     let cz = ref(false)
@@ -195,8 +287,26 @@
     let userForm = ref({})
     var userUpdate = ref(false)
 
+    let myWant = ref([])
+
+    let wantPageParams = ref({
+        current:1,
+        total:1000,
+        size:20,
+        
+    })
+    let RecordPageParams = ref({
+        current:1,
+        total:1000,
+        size:20,
+        
+    })
+    let gameAccountInfo = ref(false)
+
     onMounted(()=>{
         updateUserInfo()
+        wantListInit()
+        orderListGet()
         console.log(currentUser.value)
     })
 
@@ -347,6 +457,97 @@
             loading_.close()
         })
     }
+
+    const wantListInit = ()=>{
+        service.get('/game/want/page?current='+wantPageParams.value.current+'&size='+wantPageParams.value.size).then(res=>{
+            if(res.data.code === 200){
+                myWant.value = res.data.data.records
+                wantPageParams.value.total = res.data.data.total
+            }
+        })
+    }
+
+    let currentgameAccountInfo_ = ref({})
+    let dealObj = ref({})
+
+    function gameAccountInfo_ (row){
+        currentgameAccountInfo_.value = row
+        let var1 = JSON.parse(currentgameAccountInfo_.value.desFile)
+        if(var1 != null){
+            currentgameAccountInfo_.value.videoList = var1.video
+        }
+        
+        gameAccountInfo.value = true
+    }
+    function init2(){
+        service.get('/user/ava/'+currentgameAccountInfo_.value.pubUser).then(res=>{
+            dealObj.value = res.data.data
+        })
+    }
+
+    function deleteWant(row){
+        service.post('/game/want?userId='+currentUser.value.id+'&accId='+row).then(res=>{
+            if(res.data.code==200){
+                wantListInit()
+            }
+        })
+    }
+
+    //下单
+    let orderObj = ref({})
+    let diaOpen = ref(false)
+    const addOrder = (row)=>{
+        service.post('/order?accIds='+row.id).then(res=>{
+            if(res.data.code === 200){
+                ElMessage({
+                    type: 'success',
+                    message: '下单成功！'
+                })
+
+                orderObj.value = res.data.data
+                orderObj.value.products = []
+                orderObj.value.products.push(row)
+                
+                ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                }).then(()=>{
+                    
+                    diaOpen.value = true
+                })
+                
+            }else{
+                ElMessage({
+                    type: 'warning',
+                    message: res.data.message
+                })
+            }
+        })
+    }
+
+    // buyRecords
+    let buyRecords = ref([])
+    const orderListGet = ()=>{
+        service.post('/order/page',
+            {
+                createUser: currentUser.value.id,
+                current: RecordPageParams.value.current,
+                size: RecordPageParams.value.size
+            }
+        ).then(res=>{
+            if(res.data.code==200){
+                buyRecords.value = res.data.data.records
+                RecordPageParams.value.total = res.data.data.total
+            }else{
+                ElMessage({
+                    type: 'error',
+                    message: res.data.message
+                })
+            }
+        })
+    }
+
 </script>
 
 <style scoped>

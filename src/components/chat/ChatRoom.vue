@@ -13,7 +13,7 @@
                 </div>
             </el-scrollbar>
         </div>
-        <div class="send" style="height:5%" ref="keyIn">
+        <div class="send" style="height:5%;" ref="keyIn">
             <el-input v-model="messageContent"  class="textIn"/>
             <el-button type="primary" :icon="IconSend" @click="sendMessage">发送</el-button>
         </div>
@@ -225,6 +225,7 @@
         width: 100%;
         height: 5%;
         display: flex;
+        align-items: center;
     }
      .textIn{
         width: 80%;

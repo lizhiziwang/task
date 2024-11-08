@@ -1,7 +1,8 @@
 <template>
     <div>
     <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
-        <el-scrollbar height="100%">
+        <ProductDet :data="data" :dealObj="dealObj" ></ProductDet>
+        <!-- <el-scrollbar height="100%">
             <div style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px">
                 <el-popover
                     placement="top-start"
@@ -42,7 +43,8 @@
                 <h4>视频展示</h4>
                 <video v-for="item in data.videoList" :key="item" :src="fileOps.getFile+item" autoplay controls></video>
             </div>
-        </el-scrollbar>
+        </el-scrollbar> -->
+
         <template #footer>
             <div style="flex: auto">
                 <el-button @click="close">添加想要</el-button>
@@ -76,19 +78,10 @@
 
         <el-dialog
             v-model="diaOpen"
-            title="success"
             width="600"
             align-center
         >
             <order :order="orderObj" @closeTarget="orderClose"></order>
-            <!-- <template #footer>
-            <div class="dialog-footer">
-                <el-button @click="centerDialogVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="centerDialogVisible = false">
-                Confirm
-                </el-button>
-            </div>
-            </template> -->
         </el-dialog>
     </div>
 
@@ -103,6 +96,7 @@
     import { ElMessage, ElMessageBox} from 'element-plus'
     import fileOps from '../js/file'
     import order from './order.vue'
+    import ProductDet from './ProductDet.vue'
 
 
     let po = defineProps({
@@ -170,14 +164,17 @@
                     type: 'success',
                     message: '下单成功！'
                 })
+
+                orderObj.value = res.data.data
+                orderObj.value.products = []
+                orderObj.value.products.push(data.value)
+                
                 ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
                     type: 'success'
                 }).then(()=>{
-                    orderObj.value = res.data.data
-                    orderObj.value.products = []
-                    orderObj.value.products.push(data.value)
+                    
                     diaOpen.value = true
                     isOpen.value = false
                 })
@@ -200,31 +197,7 @@
             isOpen.value = false
         })
     }
-    const addFriend = (id)=>{
-        ElMessageBox.prompt('是否添加该用户为好友','提示',{
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            inputPlaceholder:'请输入申请信息',
-            type: 'warning'
-        }).then(({ value })=>{
-            service.post('/user/fri/'+currentUser.id+"?receiver="+id+"&mes="+value).then(res=>{
-                console.log(res.data.data)   
-                
-                if(res.data.code == 200&&res.data.data){
-                    ElMessage({
-                        type: 'success',
-                        message: '添加成功'
-                    })
-                }else if(res.data.code == 200&&(res.data.data===false)){
-                    console.log("已存在")
-                    ElMessage({
-                        type: 'error',
-                        message: res.data.message
-                    })
-                }
-            })
-        })
-    }
+ 
 
 
     const orderClose = (item)=>{

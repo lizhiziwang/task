@@ -17,8 +17,8 @@
                             <div class="product-info">{{ item.price }}</div>
                         </div>
                     </el-descriptions-item>
-                    <el-descriptions-item label-align="center" align="center" label="订单编号">{{order.id}}</el-descriptions-item>
-                    <el-descriptions-item label-align="center" align="center" label="订单金额">{{order.sum}}￥</el-descriptions-item>
+                    <el-descriptions-item label-align="center" align="center" label="订单编号">{{props.order.id}}</el-descriptions-item>
+                    <el-descriptions-item label-align="center" align="center" label="订单金额">{{props.order.sum}}￥</el-descriptions-item>
                 </el-descriptions>
             </div>
             <div class="order-ftoor">
@@ -74,7 +74,7 @@
         }
     })
 
-    let order = ref(props.order)
+    // let order = ref(props.order)
     let cuSetup = ref(1)
     let lock = ref(false)
     let lock1 = ref(false)
@@ -109,7 +109,7 @@
 
     function pay(){
         lock.value = true
-        service.get('/order/pay/'+order.value.id).then(
+        service.get('/order/pay/'+props.order.id).then(
             res=>{
                 if(res.data.code == 200){
                     cuSetup.value = 2
@@ -124,7 +124,7 @@
 
     function cancel(){
         lock.value = true
-        service.get('/order/cancel/'+order.value.id).then(
+        service.get('/order/cancel/'+props.order.id).then(
             res=>{
                 if(res.data.code == 200){
                     ElMessage.success('取消成功！')
@@ -132,6 +132,7 @@
                     ElMessage.error(res.data.message)
                 }
                 lock.value = false
+                close()
             }
         )
     }
