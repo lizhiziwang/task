@@ -1,8 +1,8 @@
 <template>
         <div id="one" class="one-mess" v-for="(item,index) in data" :key="index" style="width: 100%;">
             <div class="all-mess" v-if="item.uid != userId" id="bv">
-                <el-avatar :size="50" 
-                    :src="item.imgUrl"/>
+                <el-avatar :size="50" style="margin-left: 10px;"
+                    :src="fileOps.getFile+po.imgHe"/>
                 <div class="message">
                     <div class="text">
                         <span >{{item.msg}}</span>
@@ -16,9 +16,8 @@
                             <span >{{item.msg}}</span>
                         </div>
                     </div>
-                    <el-avatar :size="50" :src="item.imgUrl"/>
+                    <el-avatar :size="50" :src="fileOps.getFile+po.imgMe" style="margin-right: 30px;"/>
                 </div>
-            
             </div>
         </div>
 </template>
@@ -26,16 +25,23 @@
 
 <script setup>
     import { ref,onMounted ,reactive,watch,onUpdated} from 'vue'
+    import fileOps from '../js/file'
 
     let po = defineProps({
-        data:Array
+        data:Array,
+        imgHe:String,
+        imgMe:String
     })
+    // let imgHe = ref(po.imgHe)
+    // let imgMe = ref(po.imgMe)
+
     let data = ref(po.data)
     let userId = ref(null)
 
     onMounted(()=>{
         userId.value = JSON.parse(sessionStorage.getItem("user")).id
-        console.log("当前chatI d:"+userId.value)
+        // console.log(imgHe.value)
+        // console.log(imgMe.value)
     })
 
 

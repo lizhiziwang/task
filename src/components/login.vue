@@ -28,7 +28,7 @@
             console.log(data)
             if(res.data.code === 200){
                 // let e = JSON.parse(data)
-                data.user.avatar = fileOps.getFile + data.user.avatar;
+                // data.user.avatar = fileOps.getFile + data.user.avatar;
                 sessionStorage.setItem('user',JSON.stringify(data.user));
                 sessionStorage.setItem('token',data.token);
                 console.log(data.token)

@@ -7,6 +7,10 @@
             <el-main class="home_main_per" style="height:94%">
                 <el-scrollbar height="100%">
                     <el-descriptions title="个人信息" border="true">
+
+                        <template #extra>
+                            <el-button type="primary" text style="font-size: 15px;" @click="userUpdate = true">修改</el-button>
+                        </template>
                         <el-descriptions-item
                             :rowspan="2"
                             :width="140"
@@ -14,7 +18,7 @@
                             align="center">
                         <el-image
                             style="width: 100px; height: 100px"
-                            :src="currentUser.avatar"/>
+                            :src="fileOps.getFile+currentUser.avatar"/>
                         </el-descriptions-item>
                         <el-descriptions-item :width="140"  label="用户名">{{ currentUser.name }}</el-descriptions-item>
                         <el-descriptions-item  :width="140"  label="手机号">{{ currentUser.phone }}</el-descriptions-item>
@@ -30,6 +34,11 @@
                             {{ currentUser.idiograph }}
                         </el-descriptions-item>
                     </el-descriptions>
+                    <div class="mywant">
+                        <h4>我的想要</h4>
+
+                    </div>
+
                 </el-scrollbar>
             </el-main>
         </el-container>
@@ -101,6 +110,66 @@
                 </div>
               </template>
         </el-dialog>
+
+        <!-- 用户信息修改 -->
+        <el-drawer v-model="userUpdate" title="修改信息" size="40%" @open="init" :before-close="handleClose">
+            <div style="width: 80%;">
+                <el-form :model="userForm" label-width="90px"  ref="userFormRef">
+                    <el-form-item label="头像" prop="avatar">
+                        <div style="display: flex;align-items: center;">
+                            <el-image :src="fileOps.getFile + userForm.avatar" style="width: 150px;height: 150px;margin-right: 20px;"></el-image>
+                            <el-upload
+                                class="avatar-uploader"
+                                action="#"
+                                accept=".png,.jpe,.jpeg,.jfif"
+                                :http-request="handleUpload"
+                                :show-file-list="false"
+                                :before-upload="handleChange">
+                                <el-icon class="avatar-uploader-icon" style="width: 100px;height: 100px;"><Plus /></el-icon>
+                            </el-upload>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="用户名" prop="name">
+                        <el-input v-model="userForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="昵称" prop="alia">
+                        <el-input v-model="userForm.alia"></el-input>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="gender">
+                        <el-select v-model="userForm.gender" placeholder="请选择" >
+                            <el-option label="男" value="1" ></el-option>
+                            <el-option label="女" value="0" ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="userForm.phone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="出生年月" prop="birthday">
+                        <el-date-picker
+                            v-model="userForm.birthday"
+                            type="date"
+                            aria-label="Pick a date"
+                            placeholder="Pick a date"
+                            style="width: 100%"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            />
+                    </el-form-item>
+                    <el-form-item label="个人介绍" prop="idiograph">
+                        <el-input v-model="userForm.idiograph" type="textarea"/>
+                    </el-form-item>
+                    <el-form-item label="位置" prop="location">
+                        <el-input v-model="userForm.location" />
+                    </el-form-item>
+                </el-form>
+            </div>
+            <template #footer>
+                <div style="flex: auto">
+                    <el-button @click="userUpdate = false">取消</el-button>
+                    <el-button type="primary"  @click="saveUserInfo">确定</el-button>
+                </div>
+            </template>
+        </el-drawer>
+
     </div>
 </template>
 
@@ -108,7 +177,7 @@
     import MyHeader from '../home/MyHeader.vue'
     import fileOps from '../js/file'
     import { ref, onMounted } from 'vue'
-    import { ElMessage, ElMessageBox} from 'element-plus'
+    import { ElMessage, ElMessageBox,ElLoading} from 'element-plus'
     import {service} from '@/components/js/http.js';
 
     let currentUser = ref({})
@@ -122,6 +191,9 @@
     let lock_1 = ref(false)
 
     let re = {}
+
+    let userForm = ref({})
+    var userUpdate = ref(false)
 
     onMounted(()=>{
         updateUserInfo()
@@ -212,13 +284,68 @@
         await service.get('/user/current').then(res=>{
             if(res.data.code == 200){
                 currentUser.value = res.data.data
-                currentUser.value.avatar = fileOps.getFile + currentUser.value.avatar;
+                // currentUser.value.avatar = fileOps.getFile + currentUser.value.avatar;
                 sessionStorage.setItem('user',JSON.stringify(res.data.data))
             }
         })
     }
     const showTx = ()=>{
         tx.value = true
+    }
+
+    const init=()=>{
+        userForm.value = JSON.parse(sessionStorage.getItem('user'))
+    }
+    const handleClose = ()=>{
+        ElMessageBox.confirm('您所修改的内容尚未保存，是否离开', '提示', {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(()=>{
+            userUpdate.value = false
+        })
+    }
+    const handleChange = (rawFile) => {
+        if (rawFile.type !== "image/jpeg" && rawFile.type !== "image/png") {
+            ElMessage.error("只能上传jpeg/jpg/png图片");
+            return false;
+        } else if (rawFile.size / 1024 / 1024 > 10) {
+            ElMessage.error("上传图片最大不超过10MB!");
+            return false;
+        }
+        return true;
+    };
+    const handleUpload = (file)=>{
+        let fd = new FormData();
+        fd.append("files", file.file);
+            // 这里是请求上传接口
+        service.post('/game/files',fd)
+            .then(res=>{
+                if(res.data.code === 200){
+                    userForm.value.avatar = res.data.data[0]
+                    ElMessage.success('上传成功');
+                }else{
+                    ElMessage.error(result.message);
+                }
+            })
+    }
+    const saveUserInfo=()=>{
+        const loading_ = ElLoading.service({
+            lock: true,
+            text: '正在努力保存中~~',
+            background: 'rgba(0, 0, 0, 0.7)',
+        })
+        userForm.value.pwd = null
+        service.post('/user/update',userForm.value).then(res=>{
+            if(res.data.code === 200&&res.data.data){
+                ElMessage.success('保存成功');
+                sessionStorage.setItem('user',JSON.stringify(userForm.value))
+                userUpdate.value = false
+            }else{
+                ElMessage.error(result.message);
+            }
+            loading_.close()
+        })
     }
 </script>
 

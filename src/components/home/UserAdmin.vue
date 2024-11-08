@@ -41,6 +41,7 @@
                             aria-label="Pick a date"
                             placeholder="Pick a date"
                             style="width: 100%"
+                            value-format="YYYY-MM-DD HH:mm:ss"
                             />
                         </el-col>
                         <el-col class="text-center" :span="1" style="margin: 0 0.5rem">至</el-col>
@@ -50,6 +51,7 @@
                                 type="date"
                                 aria-label="Pick a date"
                                 placeholder="Pick a date"
+                                value-format="YYYY-MM-DD HH:mm:ss"
                                 style="width: 100%"/>
                         </el-col>
                     </el-form-item>
@@ -157,7 +159,7 @@
     import { onMounted, ref } from 'vue'
     import { service } from '../js/http';
     import fileOps from '../js/file'
-    import { ElMessageBox, ElMessage} from 'element-plus'
+    import { ElMessageBox, ElMessage,ElLoading} from 'element-plus'
 
 
     let searchUser = ref({
@@ -277,11 +279,11 @@
         service.post('/user/update',modifyingUser.value).then(res=>{
             loading.close()
             if(res.data.code == 200 && res.data.data){
-                message.success('修改成功')
+                ElMessage.success('修改成功')
             }else{
-                message.error('修改失败')
+                ElMessage.error('修改失败')
             }
-            
+            isOpen.value=false
         })
     }
 

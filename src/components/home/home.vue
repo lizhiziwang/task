@@ -39,7 +39,7 @@
                     <MyCard v-for="item in list" :key="item" :data = 'item' style="width: 20%;"/>
                 </div>
                 <!-- 分页组件 -->
-                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0">
+                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0" >
                     <el-pagination
                         v-model:current-page="pageParams.current"
                         v-model:page-size="pageParams.size"

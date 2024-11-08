@@ -73,10 +73,27 @@
                 </div>
             </div>
         </el-card>
+
+        <el-dialog
+            v-model="diaOpen"
+            title="success"
+            width="600"
+            align-center
+        >
+            <order :order="orderObj" @closeTarget="orderClose"></order>
+            <!-- <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="centerDialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="centerDialogVisible = false">
+                Confirm
+                </el-button>
+            </div>
+            </template> -->
+        </el-dialog>
     </div>
 
     <!-- 下单购买 -->
- 
+    
     
 </template>
 
@@ -85,6 +102,7 @@
     import {service} from '@/components/js/http.js';
     import { ElMessage, ElMessageBox} from 'element-plus'
     import fileOps from '../js/file'
+    import order from './order.vue'
 
 
     let po = defineProps({
@@ -96,7 +114,8 @@
     
     var data = ref(po.data)
     let dealObj = ref({})
-    let diaOpen = ref(true)
+    let diaOpen = ref(false)
+    let orderObj = ref({})
     
 
 
@@ -146,7 +165,7 @@
 
     const addOrder = ()=>{
         service.post('/order?accIds='+data.value.id).then(res=>{
-            if(res.data.code === 200&& res.data.data){
+            if(res.data.code === 200){
                 ElMessage({
                     type: 'success',
                     message: '下单成功！'
@@ -155,8 +174,15 @@
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
                     type: 'success'
+                }).then(()=>{
+                    orderObj.value = res.data.data
+                    orderObj.value.products = []
+                    orderObj.value.products.push(data.value)
+                    diaOpen.value = true
+                    isOpen.value = false
                 })
-            }else if(res.data.code === 200&& (!res.data.data)){
+                
+            }else{
                 ElMessage({
                     type: 'warning',
                     message: res.data.message
@@ -175,12 +201,13 @@
         })
     }
     const addFriend = (id)=>{
-        ElMessageBox.confirm('是否添加该用户为好友','提示',{
+        ElMessageBox.prompt('是否添加该用户为好友','提示',{
             confirmButtonText: '确认',
             cancelButtonText: '取消',
+            inputPlaceholder:'请输入申请信息',
             type: 'warning'
-        }).then(()=>{
-            service.post('/user/fri/'+currentUser.id+"?receiver="+id).then(res=>{
+        }).then(({ value })=>{
+            service.post('/user/fri/'+currentUser.id+"?receiver="+id+"&mes="+value).then(res=>{
                 console.log(res.data.data)   
                 
                 if(res.data.code == 200&&res.data.data){
@@ -199,6 +226,12 @@
         })
     }
 
+
+    const orderClose = (item)=>{
+        diaOpen.value = false
+        isOpen.value = false
+    }
+    
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@
       <el-header class="header" height="6%">
         <MyHeader :pubVis="false"></MyHeader>
       </el-header>
-      <el-container>
+      <el-container style="height: 94%">
         <el-aside width="21%" class="aside" style="overflow: visible;overflow-x: auto;">
             <div style="width: 100%;margin-top: 10px;display: flex;">
                 <svg t="1729153345122" style="margin-left: 10px;" class="icon" viewBox="0 0 1024 1024" version="1.1" 
@@ -29,7 +29,7 @@
             </div>
         </el-aside>
         <el-main class="main" id="mian_" ref="mainContainer">
-            <ChatRoom :target="chatTarget.id"></ChatRoom>
+            <ChatRoom :target="chatTarget" v-if="chatTarget!=null"></ChatRoom>
         </el-main>
       </el-container>
     </el-container>
@@ -137,8 +137,9 @@
     .main{
         background-color: #ecf5ff;
         /* height: 60%; */
-        height: calc(100vh - 45px); 
-        max-height: calc(100vh -60px); 
+        /* height: calc(100vh - 45px);  */
+        /* max-height: calc(100vh -60px);  */
+        height: 100%;
         /* height: 95%;
         max-height: 95%; */
     }

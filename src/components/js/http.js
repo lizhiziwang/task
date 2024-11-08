@@ -51,8 +51,9 @@ service.interceptors.response.use(
   },
   (error) => {
     if(error.status === 403){
-      ElMessage.error('请重新登录！')
+      
       location='/game/login'
+      ElMessage.error('请重新登录！')
     }
     console.log(error)
     

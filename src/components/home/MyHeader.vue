@@ -32,7 +32,7 @@
                 popper-style="width:250px"
             >
                 <template #reference>
-                    <el-avatar :size="50" :src="currentUser.avatar"></el-avatar>
+                    <el-avatar :size="50" :src="fileOps.getFile+currentUser.avatar"></el-avatar>
                 </template>
                 <div>
                     <div class="pro_top" style="width:100%;height:40px;border-bottom:1px solid #eee;">
@@ -53,10 +53,23 @@
                         <div style="width:5px"></div>
                         <h3>购买记录</h3>
                     </div>
-                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMessage">
-                        <svg t="1730268431615" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12907" width="20" height="20"><path d="M469.333333 85.333333h85.333334v85.333334h-85.333334z" fill="#323233" p-id="12908"></path><path d="M512 938.666667a170.752 170.752 0 0 1-165.290667-128l91.392 0.042666a85.333333 85.333333 0 0 0 147.797334 0h91.392A170.752 170.752 0 0 1 512 938.666667zM512 128a278.186667 278.186667 0 0 1 277.248 255.146667L810.666667 640l102.4 136.533333a21.333333 21.333333 0 0 1-17.066667 34.133334H128a21.333333 21.333333 0 0 1-17.066667-34.133334L213.333333 640l21.418667-256.853333A278.186667 278.186667 0 0 1 512 128z m0 85.333333a192.853333 192.853333 0 0 0-191.274667 167.850667l-0.938666 9.002667-23.466667 281.386666L256 725.333333h512l-40.32-53.76-23.466667-281.386666A192.853333 192.853333 0 0 0 512 213.333333z" fill="#323233" p-id="12909"></path></svg>
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center; position: relative;" class="c202410301423">
+                        <svg t="1730881623016" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5442" width="20" height="20"><path d="M401.30892 960.182765c-226.542584 0-336.631614-52.980346-336.631614-162.209306 0-76.718293 114.389384-127.118428 229.982866-144.663867l0-6.536536c-86.351083-66.053418-97.876029-184.055098-97.876029-281.071057 0-132.106837 77.750378-211.061314 208.137074-211.061314l6.880564 0c130.386696 0 208.137074 78.954477 208.137074 211.061314 0 97.015958-11.524945 214.845624-97.876029 281.071057l0 6.536536c115.593482 17.545439 229.982866 67.77356 229.982866 144.663867C752.045691 872.11154 691.152696 960.182765 401.30892 960.182765zM404.921216 218.801949c-95.639845 0-144.147825 49.540064-144.147825 147.072065 0 91.339493 9.804804 190.763649 83.082815 237.379473 9.288762 5.84848 14.793214 15.997312 14.793214 27.006215l0 51.260205c0 16.341341-12.385016 30.102469-28.554342 31.82261-121.097934 12.729044-201.428523 59.344868-201.428523 84.630942 0 65.193348 91.683521 98.220057 272.642365 98.220057 182.162943 0 286.747522-35.778935 286.747522-98.220057 0-25.286074-80.33059-71.901898-201.428523-84.630942-16.341341-1.720141-28.554342-15.48127-28.554342-31.82261l0-51.260205c0-11.008903 5.676466-21.157736 14.793214-27.006215 73.105997-46.615824 83.082815-146.211994 83.082815-237.379473 0-97.532001-48.507979-147.072065-144.147825-147.072065L404.921216 218.801949 404.921216 218.801949z" fill="#2c2c2c" p-id="5443"></path><path d="M899.117756 763.742651c-17.717453 0-31.994625-14.277171-31.994625-31.994625 0-24.426004-91.167479-83.942886-196.956157-95.123803-16.341341-1.720141-28.726356-15.48127-28.726356-31.82261L641.440618 538.404166c0-11.008903 5.676466-21.157736 14.793214-27.006215 82.738787-52.636318 91.683521-169.777927 91.683521-217.769864 0-110.433059-74.654124-133.654964-137.26726-133.654964-17.717453 0-31.994625-14.277171-31.994625-31.994625s14.277171-31.994625 31.994625-31.994625c124.194188 0 201.256509 75.686209 201.256509 197.644213 0 55.732572-10.664875 188.699479-106.476734 261.289434l0 22.18982c102.176382 18.577524 225.682513 79.986561 225.682513 154.640685C931.284394 749.46548 916.835209 763.742651 899.117756 763.742651z" fill="#2c2c2c" p-id="5444"></path></svg>
                         <div style="width:5px"></div>
-                        <h3>我的消息</h3>
+                        
+                        <h3 @click="toMessage">我的朋友</h3>
+
+                        <div style="position: absolute;right: 10px;">
+                            <el-tooltip content="您有未处理的好友申请,点击小铃铛前去处理吧" >
+                                <svg v-if="friendApplyList.length>0" @click="reOpen = true"  
+                                    t="1730881513582" class="icon" viewBox="0 0 1024 1024" version="1.1" 
+                                    xmlns="http://www.w3.org/2000/svg" p-id="4293" width="20" height="20">
+                                    <path d="M808 712l-48-108.8V448c0-102.4-65.6-195.2-160-232-3.2-44.8-41.6-80-88-80s-83.2 35.2-88 80c-96 36.8-160 129.6-160 232v155.2l-48 108.8c-6.4 14.4-4.8 30.4 3.2 43.2 8 12.8 22.4 20.8 38.4 20.8h508.8c16 0 30.4-8 38.4-20.8s9.6-30.4 3.2-43.2zM512 880c44.8 0 80-35.2 80-80H432c0 44.8 35.2 80 80 80z" fill="#d81e06" p-id="4294">
+                                        </path>
+                                </svg>
+                            </el-tooltip>
+                        </div>
+                        
                     </div>
                     <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMessage">
                         <svg t="1730268431615" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12907" width="20" height="20"><path d="M469.333333 85.333333h85.333334v85.333334h-85.333334z" fill="#323233" p-id="12908"></path><path d="M512 938.666667a170.752 170.752 0 0 1-165.290667-128l91.392 0.042666a85.333333 85.333333 0 0 0 147.797334 0h91.392A170.752 170.752 0 0 1 512 938.666667zM512 128a278.186667 278.186667 0 0 1 277.248 255.146667L810.666667 640l102.4 136.533333a21.333333 21.333333 0 0 1-17.066667 34.133334H128a21.333333 21.333333 0 0 1-17.066667-34.133334L213.333333 640l21.418667-256.853333A278.186667 278.186667 0 0 1 512 128z m0 85.333333a192.853333 192.853333 0 0 0-191.274667 167.850667l-0.938666 9.002667-23.466667 281.386666L256 725.333333h512l-40.32-53.76-23.466667-281.386666A192.853333 192.853333 0 0 0 512 213.333333z" fill="#323233" p-id="12909"></path></svg>
@@ -160,6 +173,29 @@
             </template>
 
     </el-drawer>
+
+    <!-- 好友申请 -->
+    <el-drawer v-model="reOpen" v-loading="agreeLoading" direction="ltr" title="好友申请">
+        <div  
+            style="padding: 10px;width: 100%;height: 90px;display: flex;align-items: center;position: relative;"
+            v-for="item in friendApplyList" :key="item.id"
+            >
+            <el-avatar :src="fileOps.getFile+item.avatar"/>
+            <div style="margin-left: 10px;max-width: 60%">
+                <div>
+                    <span style="font-size:20px">{{item.name}}</span>
+                </div>
+                <div>
+                    <span>{{item.reason}}</span>
+                </div>
+            </div>
+
+            <div style="display: flex;align-items: center;position: absolute;right: 5px;">
+                <el-button type="danger" style="font-size: 16px;" text size="large" @click="reject(item)">拒绝</el-button>
+                <el-button type="primary" style="font-size: 16px;" text size="large" @click="agree(item)">同意</el-button>
+            </div>
+        </div>
+    </el-drawer>
 </template>
 
 <script setup>
@@ -210,9 +246,16 @@
 
     let fileList = ref([])
 
+    let friendApplyList = ref([])
+    let reOpen = ref(false)
+
+    let agreeLoading = ref(false)
+
     onMounted(() => {
         currentUser.value = JSON.parse(sessionStorage.getItem('user'));
+        getFriendApply()
     })
+
 
     function logout(){
         sessionStorage.removeItem('token')
@@ -376,6 +419,27 @@
                 gameTypesList.value = res.data.data
             }
         })
+    }
+
+    // 获取好友申请
+    const getFriendApply = ()=>{
+        service.get('/user/get/fre').then(res=>{
+            if(res.data.code === 200){
+                friendApplyList.value = res.data.data
+            }
+        })
+    }
+
+    const agree = async (item) => {
+        agreeLoading.value = true
+        await service.post('/user/fri/req/'+item.id+'/1').then(res=>{
+            if(res.data.code === 200){
+                ElMessage.success('已同意')
+            }
+            
+        })
+        agreeLoading.value = false
+        getFriendApply()
     }
 </script>
 <style scoped>
