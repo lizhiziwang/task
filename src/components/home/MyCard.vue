@@ -1,7 +1,9 @@
 <template>
     <div>
     <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
-        <ProductDet :data="data" :dealObj="dealObj" ></ProductDet>
+        <el-scrollbar height="100%">
+            <ProductDet :data="data" :dealObj="dealObj" ></ProductDet>
+        </el-scrollbar>
         <!-- <el-scrollbar height="100%">
             <div style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px">
                 <el-popover
@@ -168,7 +170,7 @@
                 orderObj.value = res.data.data
                 orderObj.value.products = []
                 orderObj.value.products.push(data.value)
-                
+
                 ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',

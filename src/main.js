@@ -8,6 +8,7 @@ import 'element-plus/dist/index.css';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import axios from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import * as echarts from 'echarts'
 
 
 // import ElementPlus from 'element-plus';
@@ -23,6 +24,7 @@ app.config.globalProperties.$axios = axios
 
 app.use(router);
 app.use(ElementPlus);
+app.use(echarts)
 
 // app.use(VueCesium, {
 //     // cesiumPath 是指引用的Cesium.js路径，如

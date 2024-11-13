@@ -64,12 +64,12 @@
                             <el-pagination
                                 v-model:current-page="wantPageParams.current"
                                 v-model:page-size="wantPageParams.size"
-                                :page-sizes="[10, 20, 40, 60]"
+                                :page-sizes="[5,10, 20, 40, 60]"
                                 :size="wantPageParams.size"
                                 layout="total, sizes, prev, pager, next, jumper"
                                 :total="wantPageParams.total"
-                                @size-change="handleSizeChange"
-                                @current-change="handleCurrentChange"
+                                @size-change="wantListInit()"
+                                @current-change="wantListInit()"
                                 />
                         </div>
                     </div>
@@ -90,16 +90,17 @@
                             <el-table-column prop="sum" label="订单金额"></el-table-column>
                             <el-table-column align="center" fixed="right" label="操作" min-width="120">
                                 <template #default="scope">
-                                    <el-button link type="primary" size="small" @click="gameAccountInfo_(scope.row)">详情</el-button>
+                                    <el-button link type="primary" size="small" @click="gameAccountInfo_2(scope.row)">详情</el-button>
                                     <el-button link 
-                                        v-if="scope.row.state !== 'NOPAID'&& scope.row.state !== 'CANCELED'" 
-                                        type="primary" size="small" @click="deleteWant(scope.row.id)">退款</el-button>
+                                        v-if="scope.row.state !== 'NOPAID'&& scope.row.state !== 'CANCELED'&& scope.row.state !== 'REFUNDED'
+                                        && scope.row.state !== 'COMPLETE'" 
+                                        type="primary" size="small" @click="refund(scope.row.id)">退款</el-button>
                                     <el-button link 
                                         v-if="scope.row.state === 'DELIVERED'" 
-                                        type="primary" size="small" @click="deleteWant(scope.row.id)">签收</el-button>
+                                        type="primary" size="small" @click="singfor(scope.row.id)">签收</el-button>
                                     <el-button link 
                                         v-if="scope.row.state === 'NOPAID'" 
-                                        type="primary" size="small" @click="deleteWant(scope.row.id)">支付</el-button>
+                                        type="primary" size="small" @click="pay_1(scope.row.id)">支付</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -107,12 +108,12 @@
                             <el-pagination
                                 v-model:current-page="RecordPageParams.current"
                                 v-model:page-size="RecordPageParams.size"
-                                :page-sizes="[10, 20, 40, 60]"
+                                :page-sizes="[5,10, 20, 40, 60]"
                                 :size="RecordPageParams.size"
                                 layout="total, sizes, prev, pager, next, jumper"
                                 :total="RecordPageParams.total"
-                                @size-change="handleSizeChange"
-                                @current-change="handleCurrentChange"
+                                @size-change="orderListGet"
+                                @current-change="orderListGet"
                                 />
                         </div>
                     </div>
@@ -252,6 +253,12 @@
         <el-drawer v-model="gameAccountInfo" size="45%" @open="init2" :with-header="false">
             <ProductDet :data="currentgameAccountInfo_" :dealObj="dealObj" ></ProductDet>
         </el-drawer>
+        <el-drawer v-model="currentPros" size="45%" :with-header="false">
+            <ProductDet v-for="item in currentProsObj" :data="item" :dealObj="null" ></ProductDet>
+        </el-drawer>
+
+
+
         <el-dialog
             v-model="diaOpen"
             width="600"
@@ -338,6 +345,17 @@
 
     const handleCz = ()=>{
         lock_1.value = true
+        let var3 = Number(czSize.value)
+        if(var3<=0){
+            ElMessage({
+                message: '充值金额必须大于0',
+                type: 'warning',
+                duration: 1000
+            })
+            lock_1.value = false
+            return
+        }
+
         service.post('/game/money/add?m='+czSize.value+'&type=TOPUP')
             .then(res=>{
                 if(res.data.code==200){
@@ -372,7 +390,6 @@
                     re = res.data.data
                     service.get('/alipay/money?orderId='+re.id+'&amount='+txSize.value+'&aliId='+aliId.value).then(
                         res=>{
-
                             let data = res.data;
                             if(data.code==200&&data.data){
                                 //更新用户数据
@@ -488,6 +505,7 @@
     function deleteWant(row){
         service.post('/game/want?userId='+currentUser.value.id+'&accId='+row).then(res=>{
             if(res.data.code==200){
+                ElMessage.success('删除成功')
                 wantListInit()
             }
         })
@@ -548,6 +566,73 @@
         })
     }
 
+    const pay_1 = (id)=>{
+        ElMessageBox.confirm('是否确认支付？','提示',{
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(()=>{
+            service.get('/order/pay/'+id).then(res=>{
+                if(res.data.code==200){
+                    ElMessage({
+                        type: 'success',
+                        message: '支付成功！'
+                    })
+                }else{
+                    ElMessage({
+                        type: 'warning',
+                        message: res.data.message
+                    })
+                }
+            })
+        })
+    }
+
+    let currentPros = ref(false)
+    let currentProsObj = ref([])
+    const gameAccountInfo_2 = (item)=>{
+        let var1 = JSON.parse(item.commodityList)
+
+        service.post('/game/list/ids',var1).then(res=>{
+            if(res.data.code==200){
+                currentProsObj.value = res.data.data
+                currentPros.value = true
+            }
+        })
+    }
+    const refund = (id)=>{
+        service.post('/order/refund/'+id).then(res=>{
+            if(res.data.code===200){
+                ElMessage({
+                    type: 'success',
+                    message: '退款成功！'
+                })
+            }else{
+                ElMessage({
+                    type: 'warning',
+                    message: res.data.message
+                })
+            }
+        })
+    }
+
+
+    const singfor = (id) =>{
+        service.post('/order/singfor/'+id).then(res=>{
+            if(res.data.code===200&&res.data.data){
+                orderListGet()
+                ElMessage({
+                    type: 'success',
+                    message: '签收成功！'
+                })
+            }else{
+                ElMessage({
+                    type: 'warning',
+                    message: res.data.message
+                })
+            }
+        })
+    }
 </script>
 
 <style scoped>

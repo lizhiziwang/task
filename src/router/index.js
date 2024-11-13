@@ -15,7 +15,8 @@ import login from '../components/login.vue'
 import home from '../components/home/home.vue'
 import per from '../components/home/PerCenter.vue'
 import admin from '../components/home/admin.vue'
-import order from '../components/home/order.vue'
+import MyTrad from '../components/home/MyTrad.vue'
+
 // import drag from '../components/drag.vue'
 
 const router = createRouter({
@@ -27,9 +28,9 @@ const router = createRouter({
       component: per
     },
     {
-      path: '/game/order',
-      name: 'order',
-      component: order
+      path: '/game/MyTrad',
+      name: 'MyTrad',
+      component: MyTrad
     },
     {
       path: '/game/admin',

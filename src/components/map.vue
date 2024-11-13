@@ -86,9 +86,9 @@
         //不能设置为0，否则地图不展示。
         ratio: 1,
         // url: "http://10.0.20.144:31080/geoserver/develop/wms",
-        url: "http://10.0.120.106:10125/geoserver/test/wms",
+        url: "http://localhost:8080/geoserver/liangw/wms",
         params: {
-          layers: "test:pipe",
+          layers: "liangw:point",
           VERSION: "1.1.1",
           tiled: true,
           tileSize:256,

@@ -6,6 +6,7 @@ import cesium from 'vite-plugin-cesium'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
+    port:8092,
   //   // open: true, //配置自动启动浏览器 
     proxy: {
       '/api': {

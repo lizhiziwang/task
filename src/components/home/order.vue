@@ -159,6 +159,15 @@
 
     const close = ()=>{
         console.log('close')
+        service.post('/game/want?userId='+currentUser.value.id+'&accId='+props.order.products[0].id).then(
+            res=>{
+                if(res.data.code==200){
+                    ElMessage.success('已通知卖家')
+                }else{
+                    ElMessage.error(res.data.message)
+                }
+            }
+        )
         emit('closeTarget',true)
     }
 

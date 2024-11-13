@@ -8,10 +8,10 @@
             <el-scrollbar height="100%">
                 <el-carousel indicator-position="outside">
                     <el-carousel-item v-for="item in 4" :key="item">
-                        <el-image fit="fill" src="http://localhost:8062/file/get/game_wk.jfif" style="width: 100%"></el-image>
-                        <el-image fit="fill" src="http://localhost:8062/file/get/game_wk.jfif"></el-image>
-                        <el-image fit="fill" src="http://localhost:8062/file/get/game_wk.jfif"></el-image>
-                        <el-image fit="fill" src="http://localhost:8062/file/get/game_wk.jfif"></el-image>
+                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif" style="width: 100%"></el-image>
+                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
+                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
+                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
                     </el-carousel-item>
                 </el-carousel>
                 <!-- tag -->

@@ -71,7 +71,7 @@
                         </div>
                         
                     </div>
-                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMessage">
+                    <div style="width:100%;height:35px;padding-left:10px;display:flex;align-items:center;" class="c202410301423" @click="toMyTrad">
                         <svg t="1730268431615" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12907" width="20" height="20"><path d="M469.333333 85.333333h85.333334v85.333334h-85.333334z" fill="#323233" p-id="12908"></path><path d="M512 938.666667a170.752 170.752 0 0 1-165.290667-128l91.392 0.042666a85.333333 85.333333 0 0 0 147.797334 0h91.392A170.752 170.752 0 0 1 512 938.666667zM512 128a278.186667 278.186667 0 0 1 277.248 255.146667L810.666667 640l102.4 136.533333a21.333333 21.333333 0 0 1-17.066667 34.133334H128a21.333333 21.333333 0 0 1-17.066667-34.133334L213.333333 640l21.418667-256.853333A278.186667 278.186667 0 0 1 512 128z m0 85.333333a192.853333 192.853333 0 0 0-191.274667 167.850667l-0.938666 9.002667-23.466667 281.386666L256 725.333333h512l-40.32-53.76-23.466667-281.386666A192.853333 192.853333 0 0 0 512 213.333333z" fill="#323233" p-id="12909"></path></svg>
                         <div style="width:5px"></div>
                         <h3>我的交易</h3>
@@ -98,7 +98,7 @@
     <!-- 发布 -->
     <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
             <div style="display: flex;align-items: center;height:10%">
-                <el-avatar :size="50" :src="currentUser.avatar" style="margin-right:2%"></el-avatar>
+                <el-avatar :size="50" :src="fileOps.getFile+currentUser.avatar" style="margin-right:2%"></el-avatar>
                 <span style="font-size:30px">{{currentUser.name}}</span>
             </div>
             <div>
@@ -275,7 +275,7 @@
 
         
     };
-    const toMyWant = ()=>router.push('/game/myWant');
+    const toMyTrad = ()=>router.push('/game/MyTrad');
     const toMessage = ()=>router.push('/chat/chat');
     const toRecord = () => router.push('/game/record');
     const confirmClick = ()=>{

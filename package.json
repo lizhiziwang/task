@@ -11,6 +11,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.7",
     "cesium": "1.99",
+    "echarts": "^5.5.1",
     "element-plus": "^2.8.1",
     "ol": "^10.2.1",
     "olcs": "^2.20.0",

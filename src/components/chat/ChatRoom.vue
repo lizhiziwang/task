@@ -163,7 +163,7 @@
     }
 
     function con(){
-        websocket = new WebSocket("ws://localhost:8062/ws/serverTwo?id="+currentUser.value.id);
+        websocket = new WebSocket("ws://113.45.182.107:8062/ws/serverTwo?id="+currentUser.value.id);
         // 连接断开
         websocket.onclose = e => {
             console.log(`连接关闭: code=${e.code}, reason=${e.reason}`)
