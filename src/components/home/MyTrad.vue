@@ -82,6 +82,7 @@
     import * as echarts from 'echarts';
     import {service} from '@/components/js/http.js';
     import fileOps from '../js/file'
+    import { ElMessage } from 'element-plus';
 
     let currentUser = JSON.parse(sessionStorage.getItem("user"));
 
@@ -209,12 +210,40 @@
     }
 
     const fahuo = (id)=>{
-        service.get('/order/update',{id:id}).then( res => {
+        service.get('/order/fahuo/'+id).then( res => {
             if(res.data.code === 200){
+                ElMessage({
+                    message: '操作成功！',
+                    type: 'success'
+                });
                 getMyTrads()
             }
         })
     }
+
+    const wancheng = (id) =>{
+        service.get('/order/complete/'+id).then( res => {
+            if(res.data.code === 200){
+                ElMessage({
+                    message: '操作成功！',
+                    type: 'success'
+                });
+                getMyTrads()
+            }
+        })
+    }
+    const delete_ = (id)=>{
+        service.post('/game/de/'+id).then( res => {
+            if(res.data.code === 200){
+                ElMessage({
+                    message: '删除成功！',
+                    type: 'success'
+                });
+                getMyTrads()
+            }
+        })
+    }
+
 </script>
 
 <style scoped>

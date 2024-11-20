@@ -115,9 +115,6 @@
         chatTarget.value = item
 
     }
-
-    
-    
 </script>
 
 <style scoped>

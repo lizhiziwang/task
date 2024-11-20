@@ -67,12 +67,14 @@
     import { ref ,markRaw} from 'vue'
     import UserAdmin from './UserAdmin.vue'
     import AccountAdmin from './AccountAdmin.vue'
+    import AccountVis from './AccountVis.vue'
+    import ComplaintMana from './ComplaintMana.vue'
 
     let currentComponent = ref(markRaw(UserAdmin))
     const fun1 = ()=>currentComponent.value = markRaw(UserAdmin)
     const fun2 = ()=>currentComponent.value = markRaw(AccountAdmin)
-    const fun3 = ()=>currentComponent.value = markRaw(UserAdmin)
-    const fun4 = ()=>currentComponent.value = markRaw(UserAdmin)
+    const fun3 = ()=>currentComponent.value = markRaw(AccountVis)
+    const fun4 = ()=>currentComponent.value = markRaw(ComplaintMana)
     const fun5 = ()=>currentComponent.value = markRaw(UserAdmin)
     const fun6 = ()=>currentComponent.value = markRaw(UserAdmin)
 

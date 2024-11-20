@@ -30,8 +30,12 @@
                                 <el-button type="primary" link @click="showTx">提现</el-button>
                             </div>
                         </el-descriptions-item>
-                        <el-descriptions-item :rowspan="2" label="个性签名">
+                        
+                        <el-descriptions-item span="4" label="个性签名">
                             {{ currentUser.idiograph }}
+                        </el-descriptions-item>
+                        <el-descriptions-item label="位置">
+                            {{ currentUser.location }}
                         </el-descriptions-item>
                     </el-descriptions>
                     <div class="mywant">
@@ -237,8 +241,9 @@
                         <el-input v-model="userForm.idiograph" type="textarea"/>
                     </el-form-item>
                     <el-form-item label="位置" prop="location">
-                        <el-input v-model="userForm.location" />
-                    </el-form-item>
+                        <el-input v-model="userForm.location"  disabled="true"/>
+                        <el-button link type="primary" @click="getlon">获取当前位置</el-button>
+                    </el-form-item> 
                 </el-form>
             </div>
             <template #footer>
@@ -465,13 +470,24 @@
         userForm.value.pwd = null
         service.post('/user/update',userForm.value).then(res=>{
             if(res.data.code === 200&&res.data.data){
-                ElMessage.success('保存成功');
-                sessionStorage.setItem('user',JSON.stringify(userForm.value))
+                uploadLocal()
+                ElMessage.success('修改成功');
                 userUpdate.value = false
             }else{
                 ElMessage.error(result.message);
             }
             loading_.close()
+        })
+    }
+
+    const uploadLocal = async()=> {
+        await service.get('/user/current').then(res=>{
+            if(res.data.code === 200){
+                // ElMessage.success('上传成功');
+                sessionStorage.setItem('user',JSON.stringify(res.data.data))
+            }else{
+                ElMessage.error(result.message);
+            }
         })
     }
 
@@ -633,6 +649,26 @@
             }
         })
     }
+
+
+const getlon = ()=>{
+  console.log('浏览器地理定位。');
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log('纬度:', latitude);
+        console.log('经度:', longitude);
+        userForm.value.lon = longitude
+        userForm.value.lat = latitude
+        userForm.value.location = longitude+','+latitude
+      }, function (error) {
+        ElMessage.error('获取位置信息失败:', error);
+      });
+    } else {
+      ElMessage.error('浏览器不支持地理定位。');
+    }
+}
 </script>
 
 <style scoped>

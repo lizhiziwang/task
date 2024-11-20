@@ -17,7 +17,7 @@
     import fileOps from './js/file'
     // import axios from 'axios';
 
-    const username = ref('kirito')
+    const username = ref('kiri')
     const pwd = ref('123456')
     const router = useRouter()
     function login(){
