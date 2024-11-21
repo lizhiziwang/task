@@ -652,21 +652,25 @@
 
 
 const getlon = ()=>{
-  console.log('浏览器地理定位。');
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        console.log('纬度:', latitude);
-        console.log('经度:', longitude);
-        userForm.value.lon = longitude
-        userForm.value.lat = latitude
-        userForm.value.location = longitude+','+latitude
-      }, function (error) {
-        ElMessage.error('获取位置信息失败:', error);
-      });
+    console.log('浏览器地理定位。');
+    if (navigator.geolocation) {
+        try{
+            navigator.geolocation.getCurrentPosition((position)=>{
+                ElMessage.success('定位成功！');
+
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                console.log('纬度:', latitude);
+                console.log('经度:', longitude);
+                userForm.value.lon = longitude;
+                userForm.value.lat = latitude;
+                userForm.value.location = longitude+','+latitude;
+            })
+        }catch(e){
+            ElMessage.error('定位失败！');
+        }
     } else {
-      ElMessage.error('浏览器不支持地理定位。');
+        ElMessage.error('浏览器不支持地理定位。');
     }
 }
 </script>
