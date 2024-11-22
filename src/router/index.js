@@ -19,7 +19,7 @@ import MyTrad from '../components/home/MyTrad.vue'
 
 import login from '../components/login_3.vue'
 
-// import drag from '../components/drag.vue'
+import CoordPick from '../components/gis/CoordPick.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,11 +29,11 @@ const router = createRouter({
       name: 'per',
       component: per
     },
-    // {
-    //   path: '/game/log',
-    //   name: 'log',
-    //   component: log
-    // },
+    {
+      path: '/coord',
+      name: 'coord',
+      component: CoordPick
+    },
     {
       path: '/game/MyTrad',
       name: 'MyTrad',

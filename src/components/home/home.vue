@@ -7,11 +7,17 @@
         <el-main class="home_main">
             <el-scrollbar height="100%">
                 <el-carousel indicator-position="outside">
-                    <el-carousel-item v-for="item in 4" :key="item">
-                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif" style="width: 100%"></el-image>
-                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
-                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
-                        <el-image fit="fill" src="http://113.45.182.107:8062/file/get/game_wk.jfif"></el-image>
+                    <el-carousel-item >
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                    </el-carousel-item>
+                    <el-carousel-item >
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                    </el-carousel-item>
+                    <el-carousel-item >
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                    </el-carousel-item>
+                    <el-carousel-item >
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
                     </el-carousel-item>
                 </el-carousel>
                 <!-- tag -->
@@ -67,81 +73,7 @@
 
     let gameType = ref([])
     let activeName = ref('ALL')
-    let list = ref([
-        {
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    },{
-        desText:'答答答答答答答答答答答答答答',
-        gameName:'大富翁二色一看',
-        wantCount:338555,
-        isLike:false,
-        price:5896.26
-    }
-    ]) 
+    let list = ref([]) 
 
     let pageParams = ref({
         current:1,
