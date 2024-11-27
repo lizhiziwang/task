@@ -7,6 +7,7 @@
         <el-main class="home_main">
             <el-scrollbar height="100%">
                 <el-carousel indicator-position="outside">
+                    <!-- 可更换 -->
                     <el-carousel-item >
                         <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
                     </el-carousel-item>
