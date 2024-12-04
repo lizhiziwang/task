@@ -378,7 +378,7 @@
     }
 
     const pay = () =>{
-        const payUrl = 'http://localhost:8062/alipay/pay?subject=账号充值&traceNo=' + re.id + '&totalAmount=' + re.operatorAmount+'&currentUserId='+currentUser.value.id;
+        const payUrl = 'http://113.45.182.107:8062/alipay/pay?subject=账号充值&traceNo=' + re.id + '&totalAmount=' + re.operatorAmount+'&currentUserId='+currentUser.value.id;
         window.open(payUrl, '_blank');
     }
 

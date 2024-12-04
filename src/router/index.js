@@ -18,12 +18,18 @@ import admin from '../components/home/admin.vue'
 import MyTrad from '../components/home/MyTrad.vue'
 
 import login from '../components/login_3.vue'
+import cluster from '../components/cluster.vue'
 
 import CoordPick from '../components/gis/CoordPick.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/cluster',
+      name: 'cluster',
+      component: cluster
+    },
     {
       path: '/game/per',
       name: 'per',

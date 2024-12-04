@@ -5,16 +5,39 @@
             <div class="form sign-in" style="background-color: #FFFFFF;">
                 <div style="margin-top: 10%;">
                     <h2>欢迎回来,</h2>
-                <label>
-                <span>账号名称</span>
-                <input type="text" v-model="username"/>
-                </label>
-                <label>
-                <span>密码</span>
-                <input type="password" v-model="pwd"/>
-                </label>
-                <el-button type="primary" link class="forgot-pass" @click="forget">忘记密码</el-button>
-                <button type="button" class="submit" @click="login">登录</button>
+                    <div v-if="!isEmail">
+                      <label>
+                        <span>账号名称</span>
+                        <input type="text" v-model="username"/>
+                        </label>
+                        <label>
+                        <span>密码</span>
+                        <input type="password" v-model="pwd"/>
+                        </label>
+                    </div>
+                    <div v-else>
+                      <label>
+                        <span>邮箱</span>
+                        <input type="text" v-model="email" />
+                        </label> 
+                        <label style="margin: 25px 0 10px 160px; width: 300px;">
+                        <span>验证码</span>
+                        <div style="display: flex;justify-content: center;">
+                          <input type="text" v-model="code" style="width: 260px;"/>
+                          <el-button style="width: 80px;margin: 0; font-size: 14px;border-radius: 5px;" text type="primary" :disabled="isSend" bg  @click="sendCode">
+                            {{isSend?'已发送':'发送'}}
+                          </el-button>
+                        </div>
+                        </label>
+                    </div>
+                    <div style="display: flex;justify-content: center;margin-top: 5px;">
+                      <el-button style="width: 80px;margin: 0; font-size: 14px;" v-if="!isEmail" type="primary" link size="small" @click="forget">忘记密码</el-button>
+                      <el-button style="width: 80px;margin: 0;font-size: 14px;" v-if="!isEmail"  type="primary" link size="small" @click="isEmail = !isEmail">邮箱登录</el-button>
+                      <el-button style="font-size: 14px;" v-else  type="primary" link size="small" @click="isEmail = !isEmail">账号密码</el-button>
+                    </div>
+                    <button type="button" class="submit" @click="login">登录</button>
+
+                    
                 </div>
                 <!-- <button type="button" class="fb-btn">Connect with <span>facebook</span></button> -->
             </div>
@@ -61,7 +84,7 @@
     import { ref } from 'vue'
     import {service} from '@/components/js/http.js'
     import { useRouter } from 'vue-router'
-    import { ElMessage } from 'element-plus'
+    import { ElMessage ,ElNotification} from 'element-plus'
 
     const username = ref('kiri')
     const pwd = ref('123456')
@@ -72,7 +95,16 @@
         pwd:''
     })
 
+    let isEmail = ref(false)
+    let email = ref('2769695382@qq.com')
+
+    let isSend = ref(false)
+
     const router = useRouter()
+    let code = ref('')
+
+    let emailPattern = /^([A-Za-z0-9_\-\.])+\@(163.com|qq.com|42du.cn)$/;
+    
 
     const signUp = () => {
         const contElement = document.querySelector('.cont');
@@ -82,6 +114,12 @@
     }
 
     const login = () => {
+      if(isEmail.value){
+        mail_login()
+        return;
+      }
+        
+
         service.get('/user/login?'+'userName='+username.value+'&password='+pwd.value)
         .then(res=>{
             let data = res.data.data;
@@ -120,6 +158,82 @@
             }
         })
     }
+
+    // 邮箱格式验证
+    const  verify = ()=>{
+
+        if(emailPattern.test(email.value)){
+          ElNotification({
+            title: '验证通过',
+            message: '邮箱格式正确',
+            type: 'success',
+          })
+          return true
+        }else{
+          ElNotification({
+            title: '验证不通过',
+            message: '邮箱格式错误',
+            type: 'error',
+          })
+          return false
+        }
+    }
+
+    const sendCode = () => {
+      if(!verify()){
+        return;
+      }
+      isSend.value = true;
+      setTimeout(()=>{
+        isSend.value = false;
+      },1000*60*5)
+
+      service.get('/user/sendEmail?target='+email.value)
+      .then(res=>{
+        if(res.data.code === 200){
+          ElNotification({
+            title: '验证码发送成功',
+            message: '验证码发送成功，请在五分钟内操作。若为收到请检查邮箱或者刷新页面重试！',
+            type: 'success',
+          })
+        }
+      })
+    }
+    const mail_login = ()=>{
+        if(!code.value){
+          ElNotification({
+            title: '警告',
+            message: '请输入验证码！',
+            type: 'warning',
+          })
+        }
+
+        service.get('/user/email?email='+email.value+'&code='+code.value)
+        .then(res=>{
+          let data = res.data.data;
+          if(res.data.code === 200){
+            ElNotification({
+              title: '登录成功',
+              message: '登录成功，即将跳转至主页',
+              type: 'success',
+            })
+
+            sessionStorage.setItem('user',JSON.stringify(data.user));
+                sessionStorage.setItem('token',data.token);
+            setTimeout(()=>{
+              router.push({path:'/game/home'})
+            })
+          }else{
+            ElNotification({
+              title: '登录失败',
+              message: res.data.message,
+              type: 'error',
+            })
+          }
+        })
+    }
+
+
 </script>
 
 <style scoped>

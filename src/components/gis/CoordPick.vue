@@ -20,6 +20,7 @@
                         <el-option label="高德影像" value="高德影像"/>
                         <el-option label="百度地图" value="百度地图"/>
                         <el-option label="天地图" value="天地图"/>
+                        <el-option label="谷歌地图" value="谷歌地图"/>
                     </el-select>
                 </div>
             </div>
