@@ -138,7 +138,7 @@
 
                 <el-table-column label="是否还在">
                     <template #default="scope">
-                        {{ scope.row.isExist===0?'在售':'已售' }}
+                        {{ scope.row.isExist===1?'在售':'已售' }}
                     </template>
                 </el-table-column>
 
