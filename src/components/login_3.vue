@@ -129,6 +129,7 @@
                 sessionStorage.setItem('user',JSON.stringify(data.user));
                 sessionStorage.setItem('token',data.token);
                 console.log(data.token)
+                ElMessage.success('登录成功')
                 router.push({path:'/game/home'})
             }else{
                 ElMessage.error(res.data.message)
@@ -206,6 +207,7 @@
             message: '请输入验证码！',
             type: 'warning',
           })
+          return;
         }
 
         service.get('/user/email?email='+email.value+'&code='+code.value)

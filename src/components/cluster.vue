@@ -11,13 +11,21 @@
     import {maps} from '@/components/js/layer.js'
     import Map from "ol/Map"
     import WKT from "ol/format/WKT"
+    import MVT from "ol/format/MVT"
     import GeoJSON from "ol/format/GeoJSON"
     import Vector from "ol/source/Vector"
     import View from "ol/View"
     import Projection from "ol/proj/Projection"
     import { Tile as TileLayer } from 'ol/layer'
-    import { TileWMS, XYZ } from 'ol/source'
-    import { Vector as VectorLayer } from 'ol/layer';
+    import { TileWMS, XYZ} from 'ol/source'
+    import { Vector as VectorLayer} from 'ol/layer';
+
+    import VectorTileLayer from 'ol/layer/VectorTile';  
+    import VectorTileSource from 'ol/source/VectorTile';
+    import {defaultLoadFunction} from 'ol/source/VectorTile';
+    import {loadFeaturesXhr} from 'ol/featureloader'
+
+
     import ElMessage from 'element-plus'
     import Style from 'ol/style/Style'
     import Text from 'ol/style/Text'
@@ -28,6 +36,11 @@
     import {service,Re_Queue} from '@/components/js/http.js';
 
     var map = null;
+    // const url = 'http://10.0.120.106:12050/pipe/pipe/stream/{z}/{x}/{y}';
+    // const url = 'http://10.0.120.106:12050/pipe/pipe/stream';
+
+    const url = 'http://10.0.120.106:12050/mapserver/tile/{z}/{x}/{y}?tenantId=1773355726431895643&theme=press&tableName=t_pipe';
+
 
     // 级别
     // var clusterIndexSet = {
@@ -61,7 +74,7 @@
 
     let current_level = ''
     let move_zoom = 0;
-
+    let pressData = new Map()
     // vector
     
     var wkt = 'POINT(113.90149133406717 22.719296937819504)';
@@ -73,23 +86,191 @@
     });
     // 将所有点添加到矢量数据源
     const source = new Vector({
-        features: [feature]
+        features: []
     });
+    
+
+  
 
     // 将矢量数据源添加到矢量图层
     var vectorLayer = new VectorLayer({
-        source:source
+        source:source,
+
+        style:function(e){
+            var press = e.press;
+            var color = 'blue';
+            if (press>=0.05&&press<=0.15) {
+                color = '#0ebeff';
+            } 
+            if (press>=0.15&&press<=0.18) {
+                color = '#29b0f7';
+            } 
+            if (press>=0.18&&press<=0.19) {
+                color = '#44a2ee';
+            } 
+            if (press>=0.18&&press<=0.2) {
+                color = '#2daef5';
+            } 
+            if (press>=0.2&&press<=0.22) {
+                color = '#38a8f2';
+            } 
+            if (press>=0.22&&press<=0.24) {
+                color = '#7788de';
+            } 
+            if (press>=0.24&&press<=0.26) {
+                color = '#8183db';
+            } 
+            if (press>=0.26&&press<=0.28) {
+                color = '#8c7dd7';
+            } 
+            if (press>=0.28&&press<=0.30) {
+                color = '#a86966';
+            } 
+            if (press>=0.30&&press<=0.35) {
+                color = '#b96055';
+            } 
+            if (press>=0.35&&press<=0.4) {
+                color = '#c41818';
+            } 
+            
+
+            return new Style({
+                stroke: new Stroke({
+                        color: color,
+                        width: 2
+                    })
+            })
+        }
+
+    });
+    const mvt_format = new MVT();
+    const mvt_source = new VectorTileSource({
+        format: mvt_format,
+        url: 'http://10.0.120.106:12050/mapserver/tile/{z}/{x}/{y}?tenantId=1773355726431895643&theme=pressure',
+        tileLoadFunction: function(tile, src) {
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = 'arraybuffer';
+            xhr.open('GET', src);
+            xhr.setRequestHeader('Authorization', 'Bearer YOUR_ACCESS_TOKEN'); // 添加自定义请求头
+            xhr.onload = () =>{
+                if (xhr.status === 200) {
+                     // 使用 tile.setLoader 来设置加载器
+                    //  console.log(tile)
+                    //  tile.setLoader(function(extent, resolution, projection) {
+                        const features = tile.getFormat().readFeatures(xhr.response,{
+                            extent: tile.extent,
+                            featureProjection: tile.projection
+                        });
+                        // console.log(features)
+                        tile.setFeatures(features);
+                    // });
+                } else {
+                    console.error('Failed to load tile:', src);
+                }
+            };
+            xhr.send();
+        }
+    
+    })
+    var mvtLayer = new VectorTileLayer({
+        source:mvt_source,
+
+        style:function(e){
+            let a = pressData[e.properties_.id]
+            var color = 'blue';
+            if(a == undefined){
+                return new Style({
+                    stroke: new Stroke({
+                            color: color,
+                            width: 2
+                        })
+                });
+            }
+            var press = a.press
+           
+            if (press>=0.05&&press<=0.15) {
+                color = '#0ebeff';
+            } 
+            if (press>=0.15&&press<=0.18) {
+                color = '#29b0f7';
+            } 
+            if (press>=0.18&&press<=0.19) {
+                color = '#44a2ee';
+            } 
+            if (press>=0.18&&press<=0.2) {
+                color = '#2daef5';
+            } 
+            if (press>=0.2&&press<=0.22) {
+                color = '#38a8f2';
+            } 
+            if (press>=0.22&&press<=0.24) {
+                color = '#7788de';
+            } 
+            if (press>=0.24&&press<=0.26) {
+                color = '#8183db';
+            } 
+            if (press>=0.26&&press<=0.28) {
+                color = '#8c7dd7';
+            } 
+            if (press>=0.28&&press<=0.30) {
+                color = '#a86966';
+            } 
+            if (press>=0.30&&press<=0.35) {
+                color = '#b96055';
+            } 
+            if (press>=0.35&&press<=0.4) {
+                color = '#c41818';
+            } 
+            
+
+            return new Style({
+                stroke: new Stroke({
+                        color: color,
+                        width: 2
+                    })
+            })
+        }
+
+    });
+    
+    // const png_layer = new TileLayer({
+    //   source: new TileWMS({
+    //     //不能设置为0，否则地图不展示。
+    //     ratio: 1,
+    //     url: "http://10.0.120.106:8062/mapserver/png",
+    //     params: {
+    //       layers: "dyw:pipe",
+    //       VERSION: "1.1.1",
+    //       tiled: true,
+    //       tileSize:256,
+    //       format:"image/png",
+    //       type:"wms",
+    //       // CQL_FILTER: "task_id = '1828737322178265167'"
+    //       // viewparams: "condition1:log_id = '1784462986302496840';condition2:log_id = '1784463202015551551';condition3:log_id = '1778328365816131601';"  
+    //     },
+    //     serverType: "geoserver",
+    //   }),
+    // });
+    const png_layer_ = new TileLayer({
+      source: new XYZ({
+        visible: true,
+        // 高德影像地图
+        // url: 'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        // 高德矢量地图
+        // url: "http://10.0.120.106:8062/mapserver/png?x={x}&y={y}&z={z}&size=256&CQL_FILTER=material='WSZ0127001'",
+        url: "http://10.0.120.106:8062/mapserver/wmts/png?x={x}&y={y}&z={z}&size=512",
+
+        })
     });
 
     onMounted(()=>{
         initMap()
-        map.addLayer(vectorLayer)
+        // map.addLayer(vectorLayer)
+        // get_press_data()
+        // map.addLayer(mvtLayer)
+        console.log(map.getView().getResolution())
 
-
-        
-        console.log(map)
-        loadMap()
-        
+        map.addLayer(png_layer_)
     })
 
     const initMap = ()=>{
@@ -103,13 +284,14 @@
         //地图容器ID
             target: "map",
             //引入地图
-            layers: [maps["高德地图"]],
+            // layers: [maps["高德地图"]],
+            layers: [],
             view: new View({
                 projection:projection,
                 //地图中心点
                 center: [1.2715915047398917E7,3453476.714017157],
-                zoom: 3,
-                minZoom:1, // 地图缩放最小级别
+                zoom: 6,
+                minZoom:6, // 地图缩放最小级别
             }),
             
         });
@@ -300,7 +482,7 @@
         let tenantId = obj.tenantId
         let tableName = obj.tableName
 
-        service.get('/map/lev18/t_fittings?tenantId='+tenantId+'&extent='+extent_.join(','))
+        service.get('/map/lev18/'+tableName+'?tenantId='+tenantId+'&extent='+extent_.join(','))
         .then(res=>{
             // console.log(res)
             if (res.data.code === 200) {
@@ -332,4 +514,92 @@
         })
     }
 
+
+    const load_pipe = ()=>{
+        map.on('moveend',function(e){
+            let extent = map.getView().calculateExtent(map.getSize())
+
+            let a = map.getView().getZoom();
+            if(Math.abs(a-move_zoom)>=0.5){
+                move_zoom = a
+                get_data({
+                    tenantId:"1685910164576936014",
+                    extent:extent,
+                    tableName:"t_pipe"
+                })
+                return;
+            }
+        })
+    }
+
+    const add_gs_layer = ()=>{
+        let layer__ = new TileLayer({
+            source: new TileWMS({
+                //不能设置为0，否则地图不展示。
+                ratio: 1,
+                url: url,
+                params: {
+                    layers: "t_pipe",
+                    VERSION: "1.1.1",
+                    tiled: true,
+                    tileSize:256,
+                    format:"image/png",
+                    type:"wms",
+                },
+                serverType: "geoserver",
+            }),
+        });
+        map.addLayer(layer__);
+    }
+
+    const add_layer_stream = ()=>{
+        fetchData()
+    }
+    async function fetchData() {
+        const headers = new Headers({
+        });
+        const response = await fetch(url,{headers});
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        let receivedData = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done){
+                console.log('done');
+                break;
+            }
+
+            receivedData += decoder.decode(value, { stream: true });
+            const endIndex = receivedData.indexOf('##END##'); // 查找自定义结束标识的位置
+            if (endIndex!= -1) {
+                const jsonData = receivedData.slice(0, endIndex); // 截取到结束标识之前的数据作为JSON数组内容
+                // console.log(jsonData)
+                let srr = JSON.parse(jsonData);
+                addPipe(srr);
+                receivedData = ''
+            }
+        }
+    }
+
+    const addPipe = (arr)=>{
+        let eeeeee = arr.map(coord=>{
+            let a = format.readFeature(coord.geom, {
+                dataProjection: 'EPSG:4326', // 目标坐标系
+                featureProjection: 'EPSG:3857' // 当前坐标系
+            });
+            a.press = coord.press
+            return a;
+        })
+        source.addFeatures(eeeeee);
+    }
+
+    const get_press_data = ()=>{
+        service.get('/pipe/pipe/press/data?tenantId=1773355726431895643').then(res=>{
+            if (res.data.code === 200) {
+                pressData = res.data.data
+                console.log(pressData['1706513273920221311'])
+            }
+        })
+    }
 </script>

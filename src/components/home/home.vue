@@ -71,6 +71,8 @@
     import MyHeader from '../home/MyHeader.vue'
     import MyCard from '../home/MyCard.vue'
     import {service} from '@/components/js/http.js';
+    import { ElNotification } from 'element-plus'
+    import { useRouter } from 'vue-router'
 
     let gameType = ref([])
     let activeName = ref('ALL')
@@ -86,6 +88,16 @@
     let searchText = '';
     
     onMounted(()=>{
+        console.log(sessionStorage.getItem('user') == null)
+        if(sessionStorage.getItem('user') == null){
+            useRouter().push('/game/login')
+
+            ElNotification({
+              title: '警告',
+              message: '请先登录在访问本站点！',
+              type: 'error',
+            })
+        }
         getGameAccount()
     })
     // 获取游戏配型列表

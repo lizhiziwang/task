@@ -81,6 +81,7 @@
                                 编辑
                             </el-button>
                             <el-button link type="primary" size="small" @click="deleteUser(scope.row.id)">删除</el-button>
+                            <el-button link type="primary" v-if="scope.row.status==='在线'" size="small" @click="loginOut(scope.row.id)">下线</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -286,7 +287,19 @@
             isOpen.value=false
         })
     }
+    
+    const loginOut = (id)=>{
+        service.get('/user/down/'+id).then(res=>{
+            if(res.data.code==200){
+                ElMessage.success('成功将用户下线')
+                sessionStorage.removeItem('token')
+                router.push('/game/login')
 
+            }else{
+                ElMessage.error('下线失败')
+            }
+        })
+    }
 </script>
 
 <style  scoped>

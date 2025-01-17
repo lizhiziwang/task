@@ -258,8 +258,16 @@
 
 
     function logout(){
-        sessionStorage.removeItem('token')
-        router.push('/game/login')
+        service.get('/user/down/'+currentUser.value.id).then(res=>{
+            if(res.data.code==200){
+                ElMessage.success('退出成功')
+                sessionStorage.removeItem('token')
+                router.push('/game/login')
+
+            }else{
+                ElMessage.error('退出失败')
+            }
+        })
     }
     const home = () => router.push('/game/home')
     const per = () => router.push('/game/per')

@@ -123,6 +123,21 @@
         initMap()
         //添加绘制的矢量图层
         map.addLayer(vectorLayer)
+
+        map.on('singleclick', (e) =>{
+            var tileLayer = map.getLayers().item(0);
+            var source = tileLayer.getSource();
+            var tileGrid = source.getTileGrid();
+            let extent = map.getView().calculateExtent(map.getSize())
+            let zoom = map.getView().getZoom();
+
+            tileGrid.forEachTileCoord(tileGrid.getExtent(), zoom, function(tileCoord) {
+                const x = tileCoord[1]; 
+                const y = tileCoord[2]; 
+                const z = tileCoord[0]; 
+                console.log("x: " + x + ", y: " + y + ", z: " + z);
+            });
+        });
         
     })
     // 初始化底图
