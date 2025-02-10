@@ -284,7 +284,7 @@
     import ProductDet from './ProductDet.vue'
     import order from './order.vue'
 
-    let currentUser = ref({})
+    let currentUser = ref(JSON.parse(sessionStorage.getItem('user')))
     let cz = ref(false)
     let tx = ref(false)
     let czSize = ref('')
@@ -412,8 +412,8 @@
             })
     }
 
-    async function updateUserInfo(){
-        await service.get('/user/current').then(res=>{
+     function updateUserInfo(){
+         service.get('/user/current').then(res=>{
             if(res.data.code == 200){
                 currentUser.value = res.data.data
                 // currentUser.value.avatar = fileOps.getFile + currentUser.value.avatar;

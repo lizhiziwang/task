@@ -23,7 +23,7 @@
     import * as echarts from 'echarts'
     import {service} from '@/components/js/http.js';
     import  'echarts-extension-amap';
-    // import AMap from 'AMap'
+     //import AMap from 'AMap'
 
     const chartLeft = ref(null);
     const chartRight = ref(null);

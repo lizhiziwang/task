@@ -177,6 +177,7 @@
 
         style:function(e){
             let a = pressData[e.properties_.id]
+            
             var color = 'blue';
             if(a == undefined){
                 return new Style({
@@ -188,39 +189,11 @@
             }
             var press = a.press
            
-            if (press>=0.05&&press<=0.15) {
+            if (press>=0.05&&press<=123) {
                 color = '#0ebeff';
-            } 
-            if (press>=0.15&&press<=0.18) {
-                color = '#29b0f7';
-            } 
-            if (press>=0.18&&press<=0.19) {
-                color = '#44a2ee';
-            } 
-            if (press>=0.18&&press<=0.2) {
-                color = '#2daef5';
-            } 
-            if (press>=0.2&&press<=0.22) {
-                color = '#38a8f2';
-            } 
-            if (press>=0.22&&press<=0.24) {
-                color = '#7788de';
-            } 
-            if (press>=0.24&&press<=0.26) {
-                color = '#8183db';
-            } 
-            if (press>=0.26&&press<=0.28) {
-                color = '#8c7dd7';
-            } 
-            if (press>=0.28&&press<=0.30) {
-                color = '#a86966';
-            } 
-            if (press>=0.30&&press<=0.35) {
-                color = '#b96055';
-            } 
-            if (press>=0.35&&press<=0.4) {
-                color = '#c41818';
-            } 
+            }
+
+           
             
 
             return new Style({
@@ -258,7 +231,7 @@
         // url: 'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
         // 高德矢量地图
         // url: "http://10.0.120.106:8062/mapserver/png?x={x}&y={y}&z={z}&size=256&CQL_FILTER=material='WSZ0127001'",
-        url: "http://10.0.120.106:8062/mapserver/wmts/png?x={x}&y={y}&z={z}&size=512",
+        url: "http://localhost:8062/mapserver/wmts/file?x={x}&y={y}&z={z}&size=512",
 
         })
     });
