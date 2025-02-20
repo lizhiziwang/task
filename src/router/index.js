@@ -21,10 +21,16 @@ import login from '../components/login_3.vue'
 import cluster from '../components/cluster.vue'
 
 import CoordPick from '../components/gis/CoordPick.vue';
+import ai from '../components/chat/AIChat.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/ai',
+      name: 'ai',
+      component: ai
+    },
     {
       path: '/cluster',
       name: 'cluster',

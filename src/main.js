@@ -10,11 +10,26 @@ import axios from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 
+// main.js
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+import '@kangc/v-md-editor/lib/style/preview.css';
+// 引入你所使用的主题 此处以 github 主题为例
+import githubTheme from '@kangc/v-md-editor/lib/theme/github';
+import '@kangc/v-md-editor/lib/theme/style/github.css';
+
+// highlightjs
+import hljs from 'highlight.js';
+
+
 
 // import ElementPlus from 'element-plus';
 // import 'element-plus/theme-chalk/src/index.scss';
 
 const app = createApp(App);
+
+VMdPreview.use(githubTheme, {
+  Hljs: hljs,
+});
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
@@ -25,6 +40,8 @@ app.config.globalProperties.$axios = axios
 app.use(router);
 app.use(ElementPlus);
 app.use(echarts)
+app.use(VMdPreview);
+
 
 // app.use(VueCesium, {
 //     // cesiumPath 是指引用的Cesium.js路径，如

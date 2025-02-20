@@ -144,7 +144,7 @@
     }
  </script>
 
- <style>
+ <style scoped>
     .chat-room{
         width: 100%;
         height: 100%;

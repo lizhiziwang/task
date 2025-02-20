@@ -261,14 +261,10 @@
         <el-drawer v-model="currentPros" size="45%" :with-header="false">
             <ProductDet v-for="item in currentProsObj" :data="item" :dealObj="null" ></ProductDet>
         </el-drawer>
-
-
-
         <el-dialog
             v-model="diaOpen"
             width="600"
-            align-center
-        >
+            align-center>
             <order :order="orderObj" @closeTarget="diaOpen = false"></order>
         </el-dialog>
 

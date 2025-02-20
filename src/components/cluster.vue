@@ -1,12 +1,19 @@
 
 <template>
-    <div style="width: 100%; height: 100%;position: relative;">
+    <div style="width: 100%; height: 90%;position: relative;">
         <div id="map" style="width: 100%; height: 100%;min-width: 100%;min-height: 100%;position: absolute;"></div>
 
+    </div>
+
+    <div>
+        <AIChat :data="datar"/>
     </div>
 </template>
 
 <script setup>
+    import AIChat from '@/components/chat/AIChat.vue'
+
+
     import { ref, onMounted } from 'vue'
     import {maps} from '@/components/js/layer.js'
     import Map from "ol/Map"
@@ -34,6 +41,12 @@
     import Stroke from 'ol/style/Stroke'
     import Icon from 'ol/style/Icon'
     import {service,Re_Queue} from '@/components/js/http.js';
+
+    let datar = ref([
+        {
+            text:''
+        }
+    ])
 
     var map = null;
     // const url = 'http://10.0.120.106:12050/pipe/pipe/stream/{z}/{x}/{y}';
