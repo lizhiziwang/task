@@ -20,6 +20,7 @@
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "three": "^0.165.0",
+    "three-gltf-loader": "^1.111.0",
     "vite-plugin-cesium": "^1.2.23",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"

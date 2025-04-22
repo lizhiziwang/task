@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <div id="map"  :class="is_full?'map_s1' : 'map_s2'">
+        <div id="map"  :class="is_full?'map_s1' : 'map_s2'" style="background-color: #3B3B36;">
             <div class="map_select">
                 <div style="display: flex; align-items: center;">
                     <el-select
@@ -76,7 +76,6 @@
 </template>
 
 <script setup>
-
     import { ref,onMounted } from 'vue'
     import Map from "ol/Map"
     import WKT from "ol/format/WKT"
@@ -89,6 +88,11 @@
     import { Vector as VectorLayer } from 'ol/layer';
     import ElMessage from 'element-plus'
     import Style from 'ol/style/Style'
+    import Fill from 'ol/style/Fill'
+    import Stroke  from 'ol/style/Stroke'
+    // import Fill from 'ol/style/Fill'
+    import { toContext } from 'ol/render';
+
     import Icon from 'ol/style/Icon'
     import FullScreen from 'ol/control/FullScreen'
     import Draw from 'ol/interaction/Draw'
@@ -123,22 +127,25 @@
         initMap()
         //添加绘制的矢量图层
         map.addLayer(vectorLayer)
+       
 
         map.on('singleclick', (e) =>{
-            var tileLayer = map.getLayers().item(0);
-            var source = tileLayer.getSource();
-            var tileGrid = source.getTileGrid();
-            let extent = map.getView().calculateExtent(map.getSize())
-            let zoom = map.getView().getZoom();
+            // var tileLayer = map.getLayers().item(0);
+            // var source = tileLayer.getSource();
+            // var tileGrid = source.getTileGrid();
+            // let extent = map.getView().calculateExtent(map.getSize())
+            // let zoom = map.getView().getZoom();
 
-            tileGrid.forEachTileCoord(tileGrid.getExtent(), zoom, function(tileCoord) {
-                const x = tileCoord[1]; 
-                const y = tileCoord[2]; 
-                const z = tileCoord[0]; 
-                console.log("x: " + x + ", y: " + y + ", z: " + z);
-            });
+            // tileGrid.forEachTileCoord(tileGrid.getExtent(), zoom, function(tileCoord) {
+            //     const x = tileCoord[1]; 
+            //     const y = tileCoord[2]; 
+            //     const z = tileCoord[0]; 
+            //     console.log("x: " + x + ", y: " + y + ", z: " + z);
+            // });
+            console.log(e.coordinate)
         });
-        
+        // draw_line_pic();
+        // fetchData('http://10.0.120.106:8062/mapserver/line')
     })
     // 初始化底图
     const initMap = () => {
@@ -157,7 +164,7 @@
                 projection:projection,
                 //地图中心点
                 center: [1.2715915047398917E7,3453476.714017157],
-                zoom: 3,
+                zoom: 8,
                 minZoom:1, // 地图缩放最小级别
             }),
             
@@ -185,10 +192,12 @@
         // ElMessage.success('坐标：'+wkt)
         console.log(wkt_)
 
-        let rt = format.readFeature(wkt_,{
-            dataProjection: 'EPSG:4326', //	当前坐标系
-            featureProjection: 'EPSG:3857'// 目标坐标系
-        });
+        let rt = format.readFeature(wkt_,
+        // {
+        //     dataProjection: 'EPSG:4326', //	当前坐标系
+        //     featureProjection: 'EPSG:3857'// 目标坐标系
+        // }
+        );
         var style = new Style({
             image: new Icon({
                 src: fileOps.getFile+'location.png',//图标路径
@@ -256,6 +265,79 @@
         source.addFeatures(feature_json);
     }
 
+    const draw_line_pic = ()=>{
+        const line_pic = new VectorLayer({
+            source:line_source ,
+            style:new Style({
+                    renderer: (pixelCoordinates,state)=>{
+                        const ctx = state.context;
+                        const length = pixelCoordinates.length;
+                        // console.log(state)
+                        const gradient = ctx.createLinearGradient(
+                            pixelCoordinates[0][0],
+                            pixelCoordinates[0][1],
+                            pixelCoordinates[length - 1][0],
+                            pixelCoordinates[length - 1][1]
+                        );
+                        //蓝紫色
+                        // gradient.addColorStop(0, '#0000FF'); 
+                        // gradient.addColorStop(0.5, '#8A2BE2'); 
+                        // gradient.addColorStop(1, '#800080'); 
+                        //银蓝色
+                        gradient.addColorStop(0, '#C0C0C0'); 
+                        gradient.addColorStop(0.3, '#6495ED'); 
+                        gradient.addColorStop(1, '#00008B'); 
+                        ctx.beginPath();
+                        ctx.moveTo(pixelCoordinates[0][0], pixelCoordinates[0][1]);
+                        for (let i = 1; i < length; i++) {
+                            ctx.lineTo(pixelCoordinates[i][0], pixelCoordinates[i][1]);
+                        }
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+            })
+        })
+        map.addLayer(line_pic)
+    }
+
+    let line_source = new Vector({
+                features: []
+            })
+    
+    async function fetchData(url) {
+        const headers = new Headers({});
+        const response = await fetch(url,{headers});
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        let receivedData = '';
+        let i = 0
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done){
+                console.log('done');
+                break;
+            }
+
+            receivedData = decoder.decode(value, { stream: true });
+            try {
+                let wk = format.readFeature(receivedData, {
+                    dataProjection: 'EPSG:4326', // 目标坐标系
+                    featureProjection: 'EPSG:3857' // 当前坐标系
+                });
+                line_source.addFeature(wk);
+            } catch (error) {
+                console.error('Error processing feature:', error);
+            }
+            console.log(i++)
+            const endIndex = receivedData.indexOf('##END##'); // 查找自定义结束标识的位置
+            if (endIndex!= -1) {
+                const jsonData = receivedData.slice(0, endIndex); // 截取到结束标识之前的数据作为JSON数组内容
+                receivedData = ''
+            }
+        }
+    }
 </script>
 
 

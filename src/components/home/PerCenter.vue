@@ -40,7 +40,7 @@
                     </el-descriptions>
                     <div class="mywant">
                         <h4>我的想要(购物车)</h4>
-                        <el-table :data="myWant" style="width: 100%" height="550px">
+                        <el-table :data="myWant" :default-sort="{ prop: 'price', order: 'descending' }" style="width: 100%" height="550px">
                             <el-table-column type="index" width="70"  label="序号"></el-table-column>
                             <el-table-column prop="gameName" label="游戏名称" ></el-table-column>
                             <el-table-column align="center"  label="展示图" min-width="120">
@@ -52,8 +52,8 @@
                             </el-table-column>
                             <el-table-column prop="gameId" label="游戏账号" align="center"></el-table-column>
                             <el-table-column prop="desText" label="账号介绍" width="300" align="center"></el-table-column>
-                            <el-table-column prop="price" label="价格"></el-table-column>
-                            <el-table-column prop="createTime" label="出售时间"></el-table-column>
+                            <el-table-column prop="price" label="价格" sortable></el-table-column>
+                            <el-table-column prop="createTime" label="出售时间" sortable></el-table-column>
                             <el-table-column align="center" fixed="right" label="操作" min-width="120">
                                 <template #default="scope">
                                     <el-button link type="primary" size="small" @click="addOrder(scope.row)">
@@ -89,9 +89,9 @@
                                         :src="fileOps.getFile+scope.row.showImg"/>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="state_" label="订单状态"></el-table-column>
-                            <el-table-column prop="createTime" label="下单时间"></el-table-column>
-                            <el-table-column prop="sum" label="订单金额"></el-table-column>
+                            <el-table-column prop="state_" label="订单状态" sortable></el-table-column>
+                            <el-table-column prop="createTime" label="下单时间" sortable></el-table-column>
+                            <el-table-column prop="sum" label="订单金额" sortable></el-table-column>
                             <el-table-column align="center" fixed="right" label="操作" min-width="120">
                                 <template #default="scope">
                                     <el-button link type="primary" size="small" @click="gameAccountInfo_2(scope.row)">详情</el-button>

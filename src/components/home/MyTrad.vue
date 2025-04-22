@@ -35,9 +35,9 @@
                                 </el-table-column>
                                 <el-table-column prop="des_text" label="账号介绍"></el-table-column>
                                 <el-table-column prop="game_id" label="游戏账号"></el-table-column>
-                                <el-table-column prop="want_num" label="想要人数"></el-table-column>
+                                <el-table-column prop="want_num" label="想要人数" sortable></el-table-column>
                                 <el-table-column prop="state_" label="状态"></el-table-column>
-                                <el-table-column prop="price" label="金额"></el-table-column>
+                                <el-table-column prop="price" label="金额" sortable></el-table-column>
                                 <el-table-column align="center" fixed="right" label="操作" >
                                     <template #default="scope">
                                         <el-button link 

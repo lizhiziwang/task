@@ -5,9 +5,9 @@
 
     </div>
 
-    <div>
+    <!-- <div>
         <AIChat :data="datar"/>
-    </div>
+    </div> -->
 </template>
 
 <script setup>
@@ -32,6 +32,7 @@
     import {defaultLoadFunction} from 'ol/source/VectorTile';
     import {loadFeaturesXhr} from 'ol/featureloader'
 
+    import {WebGLTile} from 'ol/layer';
 
     import ElMessage from 'element-plus'
     import Style from 'ol/style/Style'
@@ -162,7 +163,7 @@
         url: 'http://10.0.120.106:12050/mapserver/tile/{z}/{x}/{y}?tenantId=1773355726431895643&theme=pressure',
         tileLoadFunction: function(tile, src) {
             const xhr = new XMLHttpRequest();
-            xhr.responseType = 'arraybuffer';
+            xhr.responseType = 'arraybuffer'; 
             xhr.open('GET', src);
             xhr.setRequestHeader('Authorization', 'Bearer YOUR_ACCESS_TOKEN'); // 添加自定义请求头
             xhr.onload = () =>{
@@ -185,7 +186,7 @@
         }
     
     })
-    var mvtLayer = new VectorTileLayer({
+    var mvtLayer = new WebGLTile({
         source:mvt_source,
 
         style:function(e){
@@ -256,7 +257,11 @@
         // map.addLayer(mvtLayer)
         console.log(map.getView().getResolution())
 
-        map.addLayer(png_layer_)
+        // map.addLayer(png_layer_)
+
+        var rerer = map.getRenderer()
+
+        console.log(rerer)
     })
 
     const initMap = ()=>{
@@ -270,13 +275,13 @@
         //地图容器ID
             target: "map",
             //引入地图
-            // layers: [maps["高德地图"]],
-            layers: [],
+            layers: [maps["高德地图"]],
+            // layers: [],
             view: new View({
                 projection:projection,
                 //地图中心点
                 center: [1.2715915047398917E7,3453476.714017157],
-                zoom: 6,
+                zoom: 8,
                 minZoom:6, // 地图缩放最小级别
             }),
             

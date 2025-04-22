@@ -134,7 +134,7 @@
                 <el-table-column prop="pubUser" label="发布人"></el-table-column>
                 <el-table-column prop="desText" label="账号介绍" min-width="80"></el-table-column>
                 <el-table-column prop="gameId" label="游戏账号"></el-table-column>
-                <el-table-column prop="wantNum" label="想要人数"></el-table-column>
+                <el-table-column prop="wantNum" label="想要人数" sortable></el-table-column>
 
                 <el-table-column label="是否还在">
                     <template #default="scope">
@@ -142,7 +142,7 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="price" label="金额"></el-table-column>
+                <el-table-column prop="price" label="金额" sortable></el-table-column>
                 <el-table-column align="center" fixed="right" label="操作" >
                     <template #default="scope">
                          <el-button link type="primary" @click="de(scope.row)">详情</el-button>

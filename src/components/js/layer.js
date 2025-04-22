@@ -3,6 +3,7 @@ import TileLayer from 'ol/layer/Tile';
 import { TileWMS } from 'ol/source';
 import TileGrid from 'ol/tilegrid/TileGrid'
 import Tile from 'ol/layer/Tile'
+import Group from 'ol/layer/Group'
 
 
 const gaode = new TileLayer({
@@ -12,8 +13,9 @@ const gaode = new TileLayer({
         // 高德影像地图
         // url: 'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
         // 高德矢量地图
-        url: 'http://webst0{1-4}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=2&style=7&key=17be85abdc35ac0635cfcfe31fe10936',
-        // url:'http://10.0.120.106:12050/map/maptile?x={x}&y={y}&z={z}&maptype=dark&&mapId=050121a2d4c44274b9c04d2612ad5272',
+        // url: 'http://webst0{1-4}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=2&style=7&key=17be85abdc35ac0635cfcfe31fe10936',
+        url:'http://10.0.120.106:8062/mapserver/wms/db/clip?x={x}&y={y}&z={z}'
+        // url:'http://10.0.120.106:12050/mapserver/wms/db?x={x}&y={y}&z={z}&maptype=dark&&mapId=050121a2d4c44274b9c04d2612ad5272',
         // tileLoadFunction: function (imageTile, src) {
         //     console.log(imageTile.getImage())
         // },
@@ -59,11 +61,27 @@ const geode_yx = new TileLayer({
         // 设置canvas滤镜 黑色
     })
 });
+
 const tianditu = new TileLayer({
     source: new XYZ({
         url: `http://t1.tianditu.com/DataServer?T=vec_w&tk=f0ef2118b8ccd76bfd9acc8217e5dab0&x={x}&y={y}&l={z}`,
     })
 });
+
+const tianditu_zhuji = new TileLayer({
+    source: new XYZ({
+        url: `http://t1.tianditu.com/DataServer?T=cva_w&tk=f0ef2118b8ccd76bfd9acc8217e5dab0&x={x}&y={y}&l={z}`,
+    })
+});
+const tianditu_dixing = new TileLayer({
+    source: new XYZ({
+        url: `http://t1.tianditu.com/DataServer?T=cta_w&tk=f0ef2118b8ccd76bfd9acc8217e5dab0&x={x}&y={y}&l={z}`,
+    })
+});
+const layerGroup = new Group({
+    layers:[tianditu,tianditu_zhuji]
+})
+
 
 var resolutions = [];
 for (var i = 0; i < 19; i++) {
@@ -108,7 +126,7 @@ const google = new TileLayer({
 const maps = {
     "高德地图":gaode,
     "高德影像":geode_yx,
-    "天地图":tianditu,
+    "天地图":layerGroup,
     "百度地图":baidu,
     "谷歌地图":google
 }

@@ -1,30 +1,35 @@
-
 <template>
-
     <el-scrollbar height="100%" ref="mainContainer" noresize="true">
+        <div class="room-top">
+            智能客服
+            <div style="float: right;"> 
+                <el-select v-model="request_body.model" placeholder="请选择模型" style="width: 200px;margin-right: 20px;" >
+                    <el-option v-for="item in models" :key="item.id" :label="item.label" :value="item.label"/>
+                </el-select>
+            </div>
+        </div>
         <div style="width: 100%;height: 100%;" ref = "sdsdsdsd">
-            <div class="ai-chat" v-for="(item,index) in data">
-                <div class="chat-container" v-if="item.type==='ai'">
+            <div class="ai-chat" v-for="(item,index) in request_body.messages">
+                <div class="chat-container" v-if="item.role!='user'">
                     <div class="avatar">
                         <el-avatar :size="50" src="https://p.ssl.qhimg.com/sdm/480_480_/t01acfe6e7ea19ee759.jpg"/>
                     </div>
                     <div class="mess" height="100%" whight="100%">
-                        <v-md-preview :text="item.text"></v-md-preview>
+                        <v-md-preview :text="item.content"></v-md-preview>
                     </div>
                 </div>
                 <div class="chat-container_"  v-else>
                     <div class="mess" height="100%" whight="100%">
-                        <v-md-preview :text="item.text"></v-md-preview>
+                        <v-md-preview :text="item.content"></v-md-preview>
                     </div>
                     <div class="avatar">
                         <el-avatar :size="50" src="https://ts4.cn.mm.bing.net/th?id=OIP-C.MqovI15z6O3xqrbcjHUm4gAAAA&w=250&h=250&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2"/>
                     </div>
                 </div>
             </div>
-        
             <div class="send" ref="keyIn">
-                <el-input v-model="q" style="width: 50%;margin-right: 20px;" placeholder="请输入提问的内容" />
-                <el-button size="large" type="primary" :icon="IconSend" @click="sendQ" v-loading="sending">发送</el-button>
+                <el-input v-model="q" style="width: 40%;margin-right: 20px;"  type="textarea"  :autosize="{ minRows: 2, maxRows: 5 }" placeholder="请输入提问的内容" />
+                <el-button class="send_button" size="large"  type="primary" :icon="IconSend" @click="sendQ" v-loading="sending">发送</el-button>
             </div>
         </div>
     </el-scrollbar>
@@ -35,6 +40,7 @@
     import fileOps from '../js/file'
     import IconSend from '../icons/IconSend.vue';
     import { ElNotification } from 'element-plus'
+    import { service } from '../js/http';
 
 
     let po = defineProps({
@@ -51,11 +57,26 @@
             text:'',
             time:''
         }
+
+    let models = ref([])
     
     
     let keyIn = ref(null)
     let sending = ref(false)
     // po.data = []
+    let request_body = ref(
+        {
+            model: "deepseek-r1",  
+            messages: [             
+                {
+                role: "assistant",       
+                content: "你好！有什么可以帮助您的吗？" 
+                }
+            ],
+            "stream": true
+        }
+    )
+
     let data = ref(po.data)
     let q = ref('你好')
     let sdsdsdsd = ref(null)
@@ -72,34 +93,43 @@
                 sendQ();
             }
         });
+        getModels();
 
         console.log(mainContainer.value)
     })
 
+    const getModels =  ()=>{
+        service.get('/ai/list/models').then(response => {
+            if (response.data.code == 200){
+                response.data.data.models.forEach(element => {
+                    models.value.push({
+                        id:element.name,
+                        label:element.name.split(':')[0],
+                        value:element.name.split(':')[0]
+                    })
+                });
+            }
+
+        });
+        
+    }
+
 
     const url = '/api/ai';
-    async function fetchData(q) {
+    async function fetchData(q,a) {
         const headers = new Headers({
-            'Content-Type': 'text/plain',
+            'Content-Type': 'application/json',
             'token':'231321321',
         });
+        console.log(JSON.stringify(request_body.value));
         const response = await fetch(url,{
             method:'POST',
-            body:q,
+            body:JSON.stringify(request_body.value),
             headers:headers
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        let a = reactive({
-            id:'',
-            text:'',
-            time:'',
-            type:'ai'
-        })
-        console.log(data.value);
-        data.value.push(a)
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -116,10 +146,11 @@
             if(chunk.indexOf('</think>')!=-1){
                 chunk = chunk.replace(/<\/think>/g, '```');
             }
-            a.text += chunk;
-            // console.log(chunk);
+            a.content += chunk;
+            // await nextTick();
+            console.log(chunk);
         }
-        console.log(a.text);
+        console.log(a.content);
     }
 
 
@@ -143,15 +174,18 @@
         }
         sending.value = true
     
-        let a = reactive({
-            id:'',
-            text:''+q.value+'',
-            time:'',
-            type:'ai-'
-        })
-        data.value.push(a)
+        const xxx = q.value
+        let a = {
+            role: "user",       
+            content: xxx
+        }
+
+        let ai =reactive({role: "assistant",content: "" })
+        request_body.value.messages.push(a)
+
+        request_body.value.messages.push(ai)
         scrollToBottom()
-        await fetchData(q.value)
+        await fetchData(q.value,ai)
         q.value = ''
         scrollToBottom()
         sending.value = false
@@ -169,10 +203,12 @@
     .send{
         margin-top: 20px;
         position: absolute;
-        bottom: 20px;
+        bottom: 10px;
         display: flex;
         width: 100%;
         justify-content: center;
+        /* justify-self: center; */
+        /* position: relative;  */
     }
     .ai-chat {
         width: 100%;
@@ -183,12 +219,13 @@
     }
     .chat-container{
         display: flex;
-        max-width: 800px;
-        margin-bottom: 80px
+        max-width: 90%;
+        /* margin-bottom: 50px; */
+        margin-top: 25px;
     }
     .chat-container_{
         display: flex;
-        max-width: 800px;
+        /* max-width: 800px; */
         margin-bottom: 80px;
         margin-left: auto
     }
@@ -203,4 +240,13 @@
         border-radius: 10px;
     }
 
+    .room-top{
+        position: absolute;
+        width: 100%;
+        height: 25px;
+        text-align: center;
+        font-size: 20px;
+        background-color: aliceblue;
+        /* display: block; */
+    }
 </style>

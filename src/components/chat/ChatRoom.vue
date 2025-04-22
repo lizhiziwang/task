@@ -1,5 +1,5 @@
 <template>
-    <div class="chat-room" v-show="target != null">
+    <div class="chat-room" v-show="target != null && target.id != 0">
         <div style="width: 100%;height: 5%;display: flex;align-items: center;">
             <span style="font-size: 20px;margin: auto;">
                 {{target.name}}
@@ -18,6 +18,11 @@
             <el-button type="primary" :icon="IconSend" @click="sendMessage">发送</el-button>
         </div>
     </div>
+    <div class="ai-room" v-show="target == null || target.id == 0">
+        <AIChat/>
+    </div>
+
+
 </template>
 
  <script setup>
@@ -25,6 +30,7 @@
     import { ref, onMounted,watch,nextTick } from 'vue'
     import {service} from '@/components/js/http.js';
     import IconSend from '../icons/IconSend.vue';
+    import AIChat from './AIChat.vue'
 
 
     let po = defineProps({
@@ -66,6 +72,8 @@
 
     onMounted(() => {
         currentUser.value = JSON.parse(sessionStorage.getItem('user'))
+        console.log('当前对象')
+        console.log(target.value)
 
         scrollToBottom()
 
@@ -161,10 +169,15 @@
         width: 100%;
         height: 5%;
         display: flex;
-        align-items: center;
+        justify-content: center;
     }
      .textIn{
         width: 80%;
         margin-right: 10px;
+    }
+
+    .ai-room{
+        width: 100%;
+        height: 100%;
     }
  </style>

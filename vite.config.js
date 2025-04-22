@@ -16,6 +16,12 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
+    },
+    onProxyReq: (proxyReq, req) => {
+      console.log(' 代理请求路径:', req.url);  // 输出转发路径 
+      console.log(' 代理请求方法:', req.method);
+      console.log(' 代理请求头:', proxyReq.getHeaders());
+      console.log(' 代理请求体:', proxyReq.getBody());
     }
   },
   plugins: [
