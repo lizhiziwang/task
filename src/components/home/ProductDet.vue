@@ -20,18 +20,18 @@
             <div class="card-body">
                 <el-descriptions
                     class="margin-top"
-                    title="游戏账号信息"
+                    title="商品信息"
                     :column="1"
                     border>
                     <el-descriptions-item align="center" label-align="center" label="展示图" :rowspan="1">
                         <el-image :src="fileOps.getFile+po.data.showImg" style="width: 100px; height: 100px"/>
                     </el-descriptions-item>  
                      
-                    <el-descriptions-item align="center" label-align="center" label="游戏名" :rowspan="1">{{po.data.gameName}}</el-descriptions-item>    
-                    <el-descriptions-item align="center" label-align="center" label="游戏ID" :rowspan="1">{{po.data.gameId}}</el-descriptions-item>    
-                    <el-descriptions-item align="center" label-align="center" label="游戏类型" :rowspan="1">{{po.data.gameType}}</el-descriptions-item>  
+                    <el-descriptions-item align="center" label-align="center" label="商品名" :rowspan="1">{{po.data.gameName}}</el-descriptions-item>
+                    <el-descriptions-item align="center" label-align="center" label="商品库存" :rowspan="1">{{po.data.gameId}}&nbsp;{{po.data.unit}}</el-descriptions-item>
+                    <el-descriptions-item align="center" label-align="center" label="类型" :rowspan="1">{{po.data.gameType}}</el-descriptions-item>
                     <el-descriptions-item align="center" label-align="center" label="想要人数" :rowspan="1">{{po.data.wantNum}}</el-descriptions-item> 
-                    <el-descriptions-item align="center" label-align="center" label="账号介绍" :rowspan="1">{{po.data.desText}}</el-descriptions-item> 
+                    <el-descriptions-item align="center" label-align="center" label="介绍" :rowspan="1">{{po.data.desText}}</el-descriptions-item>
                     <el-descriptions-item align="center" label-align="center" label="金额" :rowspan="1"><h4>￥{{po.data.price}}</h4></el-descriptions-item> 
                     
                 </el-descriptions>
@@ -40,11 +40,13 @@
                 <h4>视频展示</h4>
                 <video v-for="item in po.data.videoList" :key="item" :src="fileOps.getFile+item" autoplay controls></video>
             </div>
+
+
     </div>
 </template>
 
 <script setup>
-    import { ref, onMounted,defineProps } from 'vue'
+    import { ref, onMounted,defineProps,defineEmits } from 'vue'
     import fileOps from '../js/file'
     import { ElMessage, ElMessageBox} from 'element-plus'
     import {service} from '@/components/js/http.js';
@@ -54,6 +56,19 @@
         dealObj:Object
     })
     let currentUser = JSON.parse(sessionStorage.getItem("user"))
+    // let emit = defineEmits(['targetAddOrder'])
+
+    let order_sh = ref({
+      create_user:'',
+      //卖家
+      maijia:'',
+      num:'',
+
+    })
+
+    // let sendMess = ()=>{
+    //   emit('targetAddOrder',order_sh.value.num)
+    // }
 
        const addFriend = (id)=>{
         ElMessageBox.prompt('是否添加该用户为好友','提示',{

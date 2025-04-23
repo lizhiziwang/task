@@ -1,38 +1,42 @@
 <template>
-    <el-scrollbar height="100%" ref="mainContainer" noresize="true">
+    <div style="height: 100%;width: 100%">
+      <el-scrollbar height="90%"  ref="mainContainer" noresize="true">
         <div class="room-top">
-            智能客服
-            <div style="float: right;"> 
-                <el-select v-model="request_body.model" placeholder="请选择模型" style="width: 200px;margin-right: 20px;" >
-                    <el-option v-for="item in models" :key="item.id" :label="item.label" :value="item.label"/>
-                </el-select>
-            </div>
+          智能客服
+          <div style="float: right;">
+            <el-select v-model="request_body.model" placeholder="请选择模型" style="width: 200px;margin-right: 20px;" >
+              <el-option v-for="item in models" :key="item.id" :label="item.label" :value="item.label"/>
+            </el-select>
+          </div>
         </div>
-        <div style="width: 100%;height: 100%;" ref = "sdsdsdsd">
-            <div class="ai-chat" v-for="(item,index) in request_body.messages">
-                <div class="chat-container" v-if="item.role!='user'">
-                    <div class="avatar">
-                        <el-avatar :size="50" src="https://p.ssl.qhimg.com/sdm/480_480_/t01acfe6e7ea19ee759.jpg"/>
-                    </div>
-                    <div class="mess" height="100%" whight="100%">
-                        <v-md-preview :text="item.content"></v-md-preview>
-                    </div>
-                </div>
-                <div class="chat-container_"  v-else>
-                    <div class="mess" height="100%" whight="100%">
-                        <v-md-preview :text="item.content"></v-md-preview>
-                    </div>
-                    <div class="avatar">
-                        <el-avatar :size="50" src="https://ts4.cn.mm.bing.net/th?id=OIP-C.MqovI15z6O3xqrbcjHUm4gAAAA&w=250&h=250&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2"/>
-                    </div>
-                </div>
+        <div style="width: 100%;height: 80%;min-height: 80%" ref = "sdsdsdsd">
+          <div class="ai-chat" v-for="(item,index) in request_body.messages">
+            <div class="chat-container" v-if="item.role!='user'">
+              <div class="avatar">
+                <el-avatar :size="50" src="https://p.ssl.qhimg.com/sdm/480_480_/t01acfe6e7ea19ee759.jpg"/>
+              </div>
+              <div class="mess" height="100%" whight="100%">
+                <v-md-preview :text="item.content"></v-md-preview>
+              </div>
             </div>
-            <div class="send" ref="keyIn">
-                <el-input v-model="q" style="width: 40%;margin-right: 20px;"  type="textarea"  :autosize="{ minRows: 2, maxRows: 5 }" placeholder="请输入提问的内容" />
-                <el-button class="send_button" size="large"  type="primary" :icon="IconSend" @click="sendQ" v-loading="sending">发送</el-button>
+            <div class="chat-container_"  v-else>
+              <div class="mess" height="100%" whight="100%">
+                <v-md-preview :text="item.content"></v-md-preview>
+              </div>
+              <div class="avatar">
+                <el-avatar :size="50" src="https://ts4.cn.mm.bing.net/th?id=OIP-C.MqovI15z6O3xqrbcjHUm4gAAAA&w=250&h=250&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2"/>
+              </div>
             </div>
+          </div>
+
         </div>
-    </el-scrollbar>
+        <div class="send2" ref="keyIn">
+          <el-input v-model="q" style="width: 40%;margin-right: 20px"   type="textarea"  :autosize="{ minRows: 2, maxRows: 4 }" placeholder="请输入提问的内容" />
+          <el-button class="send_button" size="large"  type="primary" :icon="IconSend" @click="sendQ" v-loading="sending">发送</el-button>
+        </div>
+      </el-scrollbar>
+
+    </div>
 </template>
 
 <script setup>
@@ -66,7 +70,7 @@
     // po.data = []
     let request_body = ref(
         {
-            model: "deepseek-r1",  
+            model: "deepseek-r1",
             messages: [             
                 {
                 role: "assistant",       
@@ -200,21 +204,20 @@
 
 
 <style scoped>
-    .send{
-        margin-top: 20px;
+    .send2{
         position: absolute;
         bottom: 10px;
         display: flex;
         width: 100%;
-        justify-content: center;
-        /* justify-self: center; */
-        /* position: relative;  */
+      /*height: 10%;*/
+      justify-content: center;
+
     }
     .ai-chat {
         width: 100%;
         display: flex;
         /* flex-direction: column; */
-        /* justify-content: flex-end; */
+        /* justify-content: flex-end;*/
         align-items: flex-end;
     }
     .chat-container{

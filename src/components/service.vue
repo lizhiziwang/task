@@ -1,8 +1,11 @@
 <template>
-      <button @click="requestFullscreen">进入全屏</button>
-    <div @click="requestFullscreen">
-        <iframe src="http://localhost:8071/#/dashboard/app/sentinel-dashboard" id="idram" allow="payment" ref="ifram"></iframe>
-    </div>
+     <div
+       >
+       <button @click="requestFullscreen">进入全屏</button>
+       <div @click="requestFullscreen">
+         <iframe src="http://localhost:8071/#/dashboard/app/sentinel-dashboard" id="idram" allow="payment" ref="ifram"></iframe>
+       </div>
+     </div>
 </template>
 <script>
     export default{

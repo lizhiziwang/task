@@ -2,7 +2,7 @@
     <div class="chat-room" v-show="target != null && target.id != 0">
         <div style="width: 100%;height: 5%;display: flex;align-items: center;">
             <span style="font-size: 20px;margin: auto;">
-                {{target.name}}
+                {{target.name}}:{{target.id}}
             </span>
         </div>
 
@@ -18,7 +18,7 @@
             <el-button type="primary" :icon="IconSend" @click="sendMessage">发送</el-button>
         </div>
     </div>
-    <div class="ai-room" v-show="target == null || target.id == 0">
+    <div class="ai-room" v-show=" target.id == 0">
         <AIChat/>
     </div>
 

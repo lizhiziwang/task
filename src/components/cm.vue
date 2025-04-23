@@ -1,6 +1,6 @@
 <template>
     <div id="cesiumContainer"></div>
-    <div id="infoBox"></div>
+<!--    <div id="infoBox"></div>-->
 </template>
 
 <script setup>

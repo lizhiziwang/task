@@ -278,7 +278,7 @@
     import { ElMessage, ElMessageBox,ElLoading} from 'element-plus'
     import {service} from '@/components/js/http.js';
     import ProductDet from './ProductDet.vue'
-    import order from './order.vue'
+    import order from './Order.vue'
 
     let currentUser = ref(JSON.parse(sessionStorage.getItem('user')))
     let cz = ref(false)

@@ -3,6 +3,13 @@
     <el-drawer v-model="isOpen" direction="rtl" size="45%" :before-close="handleClose" :with-header="false" @open="init">
         <el-scrollbar height="100%">
             <ProductDet :data="data" :dealObj="dealObj" ></ProductDet>
+          <div>
+            <el-input-number v-model="order_show.goodNum" >
+              <template #suffix>
+                <span>{{data.unit}}</span>
+              </template>
+            </el-input-number>
+          </div>
         </el-scrollbar>
         <!-- <el-scrollbar height="100%">
             <div style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px">
@@ -54,6 +61,8 @@
             </div>
         </template>
     </el-drawer>
+    <OrderDet :open="isopen_order" @close="child_method" :dataCom="dataCom"/>
+
 
         <el-card class="box-card">
             <div class="top-card" @click="opendraw">
@@ -97,9 +106,9 @@
     import {service} from '@/components/js/http.js';
     import { ElMessage, ElMessageBox} from 'element-plus'
     import fileOps from '../js/file'
-    import order from './order.vue'
+    import order from './Order.vue'
     import ProductDet from './ProductDet.vue'
-
+    import OrderDet from './OrderDet.vue'
 
     let po = defineProps({
         data:Object
@@ -112,6 +121,17 @@
     let dealObj = ref({})
     let diaOpen = ref(false)
     let orderObj = ref({})
+    let isopen_order = ref(false)
+    let order_show = ref({
+      goodId :po.data.id,
+      goodNum:1,
+      createUser:'',
+      show_name:po.data.gameName,
+      show_png:po.data.showImg,
+      show_price:po.data.price,
+      show_unit:po.data.unit
+    })
+    let dataCom = ref([order_show.value])
     
 
 
@@ -119,13 +139,12 @@
         isOpen.value = true
     }
     function init(){
-        console.log(data.value)
         service.get('/user/ava/'+data.value.pubUser).then(res=>{
             dealObj.value = res.data.data
         })
 
         data.value.videoList = JSON.parse(data.value.desFile).video
-        console.log(data.value.videoList)
+        // console.log(data.value.videoList)
     }
 
     function doLike(){
@@ -160,34 +179,37 @@
     }
 
     const addOrder = ()=>{
-        service.post('/order?accIds='+data.value.id).then(res=>{
-            if(res.data.code === 200){
-                ElMessage({
-                    type: 'success',
-                    message: '下单成功！'
-                })
+        // service.post('/order?accIds='+data.value.id).then(res=>{
+        //     if(res.data.code === 200){
+        //         ElMessage({
+        //             type: 'success',
+        //             message: '下单成功！'
+        //         })
+        //
+        //         orderObj.value = res.data.data
+        //         orderObj.value.products = []
+        //         orderObj.value.products.push(data.value)
+        //
+        //         ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
+        //             confirmButtonText: '确认',
+        //             cancelButtonText: '取消',
+        //             type: 'success'
+        //         }).then(()=>{
+        //
+        //             diaOpen.value = true
+        //             isOpen.value = false
+        //         })
+        //
+        //     }else{
+        //         ElMessage({
+        //             type: 'warning',
+        //             message: res.data.message
+        //         })
+        //     }
+        // })
+      order_show.value.createUser = currentUser.id
 
-                orderObj.value = res.data.data
-                orderObj.value.products = []
-                orderObj.value.products.push(data.value)
-
-                ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                    type: 'success'
-                }).then(()=>{
-                    
-                    diaOpen.value = true
-                    isOpen.value = false
-                })
-                
-            }else{
-                ElMessage({
-                    type: 'warning',
-                    message: res.data.message
-                })
-            }
-        })
+      isopen_order.value = !isopen_order.value
     }
 
     const handleClose = ()=>{
@@ -205,6 +227,9 @@
     const orderClose = (item)=>{
         diaOpen.value = false
         isOpen.value = false
+    }
+    const child_method = (arg)=>{
+      isopen_order.value = arg
     }
     
 </script>

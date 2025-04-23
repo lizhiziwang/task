@@ -26,20 +26,21 @@
                     <el-tabs v-model="activeName" class="demo-tabs" @tab-change="handleClick()">
                          <!-- v-for="item in gameType" :key="item"  -->
                             <el-tab-pane label="全部" name="ALL"  style="width: 10%"></el-tab-pane>
-                            <el-tab-pane label="MOBA" name="MOBA"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="FPS" name="FPS"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="动作" name="ACT"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="射击" name="STG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="格斗" name="FTG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="冒险" name="AVG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="模拟" name="SIM"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="角色扮演" name="RPG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="策略" name="SG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="音乐" name="MG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="休闲" name="CG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="体育" name="SG_"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="竞速" name="RG"   style="width: 400px"></el-tab-pane>
-                            <el-tab-pane label="我的" name="MY"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="粮油" name="MOBA"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="果蔬" name="FPS"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="花卉" name="ACT"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="畜禽产品" name="STG"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="林产品" name="FTG"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="水产品" name="AVG"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="其他农副产品" name="SIM"   style="width: 400px"></el-tab-pane>
+<!--                            <el-tab-pane label="角色扮演" name="RPG"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="策略" name="SG"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="音乐" name="MG"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="休闲" name="CG"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="体育" name="SG_"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="竞速" name="RG"   style="width: 400px"></el-tab-pane>-->
+<!--                            <el-tab-pane label="我的" name="MY"   style="width: 400px"></el-tab-pane>-->
+
                     </el-tabs>
                 </el-scrollbar>
                 <div  style="display: flex;width: 100%;flex-wrap: wrap;height: 80%">
@@ -51,7 +52,7 @@
                         v-model:current-page="pageParams.current"
                         v-model:page-size="pageParams.size"
                         :page-sizes="[10, 20, 40, 60]"
-                        :size="pageParams.size"
+                        :size="'default'"
                         layout="total, sizes, prev, pager, next, jumper"
                         :total="pageParams.total"
                         @size-change="handleSizeChange"
@@ -89,16 +90,18 @@
     
     onMounted(()=>{
         console.log(sessionStorage.getItem('user') == null)
-        if(sessionStorage.getItem('user') == null){
-            useRouter().push('/game/login')
+        if(sessionStorage.getItem('user') == null) {
+          useRouter().push('/game/login')
 
-            ElNotification({
-              title: '警告',
-              message: '请先登录在访问本站点！',
-              type: 'error',
-            })
+          ElNotification({
+            title: '警告',
+            message: '请先登录在访问本站点！',
+            type: 'error',
+          })
         }
+        getGameType()
         getGameAccount()
+
     })
     // 获取游戏配型列表
     function getGameType(){
@@ -127,6 +130,7 @@
                 list.value = re.data.records
                 pageParams.value.current = re.data.current
                 pageParams.value.size = re.data.size
+              // console.log("size的类型："+typeof re.data.size)
                 pageParams.value.total = re.data.total
                 console.log(pageParams.value)
             }

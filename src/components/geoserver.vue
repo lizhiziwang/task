@@ -1,9 +1,11 @@
 
 <template>
-     <button @click="requestFullscreen">进入全屏</button>
-    <div @click="requestFullscreen">
-        <iframe src="http://localhost:8080/geoserver/web/?1" id="idram" allow="payment" ref="ifram"></iframe>
-    </div>
+     <div>
+       <button @click="requestFullscreen">进入全屏</button>
+       <div @click="requestFullscreen">
+         <iframe src="http://localhost:8080/geoserver/web/?1" id="idram" allow="payment" ref="ifram"></iframe>
+       </div>
+     </div>
 </template>
 <script >
     export default{

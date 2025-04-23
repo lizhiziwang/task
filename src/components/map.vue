@@ -1,20 +1,22 @@
 <template>
-    <div id="map" class="map"></div>
-    <div id="op" style="width: 100%;">
-      <el-button type="primary" @click="drawLine">线</el-button>
-      <el-button type="primary">面</el-button>
-      <button id="rotate" class="btn btn-primary" @click="rotate">旋转</button>
-      <input type="text" v-model="wkt">
-      <button id="rotate" class="btn btn-primary" @click="draw">绘制</button>
-      <button id="rotate" class="btn btn-primary" @click="to3D">切换</button>
-    </div>
-    <div style="margin-top: 20px;">
-      <el-input
-        v-model="wkt"
-        style="width: 100%"
-        :rows="20"
-        type="textarea"
-        placeholder="请输入文本"/>
+    <div>
+      <div id="map" class="map"></div>
+      <div id="op" style="width: 100%;">
+        <el-button type="primary" @click="drawLine">线</el-button>
+        <el-button type="primary">面</el-button>
+        <button id="rotate" class="btn btn-primary" @click="rotate">旋转</button>
+        <input type="text" v-model="wkt">
+        <button id="rotate" class="btn btn-primary" @click="draw">绘制</button>
+        <button id="rotate" class="btn btn-primary" @click="to3D">切换</button>
+      </div>
+      <div style="margin-top: 20px;">
+        <el-input
+            v-model="wkt"
+            style="width: 100%"
+            :rows="20"
+            type="textarea"
+            placeholder="请输入文本"/>
+      </div>
     </div>
 </template>
 <script setup>

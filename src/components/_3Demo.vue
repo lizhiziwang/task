@@ -1,10 +1,10 @@
 
 <template>
     
-    <head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-	</head>
+<!--    <head>-->
+<!--		<meta charset="utf-8">-->
+<!--		<title>My first three.js app</title>-->
+<!--	</head>-->
 
     
 </template>

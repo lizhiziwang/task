@@ -14,7 +14,7 @@
     "cesium": "1.99",
     "echarts": "^5.5.1",
     "echarts-extension-amap": "^1.12.0",
-    "element-plus": "^2.8.1",
+    "element-plus": "^2.9.8",
     "ol": "^10.2.1",
     "olcs": "^2.20.0",
     "sockjs-client": "^1.6.1",

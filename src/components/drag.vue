@@ -3,7 +3,7 @@
         <input type="text" id="messageInput" placeholder="Type a message...">
         <button onclick="sendMessage()">Send</button>
     </div>
-    <ul id="messagesList"></ul>
+<!--    <ul id="messagesList"></ul>-->
 </template>
 <script>
   var socket = new SockJS('http://127.0.0.1:8080/websocket-endpoint');
