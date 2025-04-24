@@ -158,8 +158,14 @@
     }
 
     const close = ()=>{
-        console.log('close')
-        service.post('/game/want?userId='+currentUser.value.id+'&accId='+props.order.products[0].id).then(
+      let ids = '';
+      for (let i = 0; i < props.order.products.length; i++) {
+        ids = ids+props.order.products[i].id+','
+      }
+      // console.log(props.order)
+      // console.log(ids)
+
+        service.post('/game/want/list?userId='+currentUser.value.id+'&accIds='+ids.substring(0,ids.length-1)).then(
             res=>{
                 if(res.data.code==200){
                     ElMessage.success('已通知卖家')

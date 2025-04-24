@@ -58,13 +58,6 @@
     let currentUser = JSON.parse(sessionStorage.getItem("user"))
     // let emit = defineEmits(['targetAddOrder'])
 
-    let order_sh = ref({
-      create_user:'',
-      //卖家
-      maijia:'',
-      num:'',
-
-    })
 
     // let sendMess = ()=>{
     //   emit('targetAddOrder',order_sh.value.num)

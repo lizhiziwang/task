@@ -25,7 +25,7 @@
                         <div style="width: 100%;">
                             <el-table :data="myTrads" style="width: 100%" height="550px">
                                 <el-table-column type="index" width="70"  label="序号"></el-table-column>
-                                <el-table-column prop="game_name" label="游戏名"></el-table-column>
+                                <el-table-column prop="gameName" label="商品名"></el-table-column>
                                 <el-table-column align="center" label="展示图" min-width="120">
                                     <template #default="scope">
                                         <el-image
@@ -33,20 +33,20 @@
                                             :src="fileOps.getFile+scope.row.show_img"/>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="des_text" label="账号介绍"></el-table-column>
-                                <el-table-column prop="game_id" label="游戏账号"></el-table-column>
-                                <el-table-column prop="want_num" label="想要人数" sortable></el-table-column>
-                                <el-table-column prop="state_" label="状态"></el-table-column>
+                                <el-table-column prop="desText" label="农产品介绍"></el-table-column>
+                                <el-table-column prop="gameId" label="库存" sortable></el-table-column>
+                              <el-table-column prop="unit" label="单位"></el-table-column>
+                              <el-table-column prop="wantNum" label="想要人数" sortable></el-table-column>
                                 <el-table-column prop="price" label="金额" sortable></el-table-column>
                                 <el-table-column align="center" fixed="right" label="操作" >
                                     <template #default="scope">
-                                        <el-button link 
-                                            v-if="scope.row.state === 'PAID'|| scope.row.state === 'UNDELIVER'"
-                                            type="primary" size="small" @click="fahuo(scope.row.orderId)">发货</el-button>
-                                            
-                                        <el-button link 
-                                            v-if="scope.row.state === 'RECEIVED'" 
-                                            type="primary" size="small" @click="wancheng(scope.row.orderId)">完成</el-button>
+<!--                                        <el-button link -->
+<!--                                            v-if="scope.row.state === 'PAID'|| scope.row.state === 'UNDELIVER'"-->
+<!--                                            type="primary" size="small" @click="fahuo(scope.row.orderId)">发货</el-button>-->
+<!--                                            -->
+<!--                                        <el-button link -->
+<!--                                            v-if="scope.row.state === 'RECEIVED'" -->
+<!--                                            type="primary" size="small" @click="wancheng(scope.row.orderId)">完成</el-button>-->
 
                                         <el-button link type="primary" size="small" @click="delete_(scope.row.id)">删除</el-button>
                                         <!-- <el-button link 
@@ -60,7 +60,6 @@
                                     v-model:current-page="pageParams.current"
                                     v-model:page-size="pageParams.size"
                                     :page-sizes="[5,10, 20, 40, 60]"
-                                    :size="pageParams.size"
                                     layout="total, sizes, prev, pager, next, jumper"
                                     :total="pageParams.total"
                                     @size-change="getMyTrads"
@@ -97,7 +96,7 @@
     var chartRight = ref(null);
     let option = {
         title:{
-            text: '游戏账号类型分布',
+            text: '农产品类型分布',
             show: true,
         },
         legend: {
@@ -109,7 +108,7 @@
                 dataView:{readOnly:false},
                 saveAsImage:{}
             },
-            left: '80%'
+            left: '75%'
 
         },
         series: [
