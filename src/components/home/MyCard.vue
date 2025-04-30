@@ -11,49 +11,6 @@
             </el-input-number>
           </div>
         </el-scrollbar>
-        <!-- <el-scrollbar height="100%">
-            <div style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px">
-                <el-popover
-                    placement="top-start"
-                    title="添加好友"
-                    trigger="hover"
-                    width="200"
-                >
-                    <template #reference>
-                        <el-avatar :size="50" :src="fileOps.getFile + dealObj.avatar" style="margin-right:2%"></el-avatar>
-                    </template>
-
-                    <el-button type="primary" link @click="addFriend(data.pubUser)">添加</el-button>对方为您的好友，快速的了解该账号。
-                </el-popover>
-                <span style="font-size:30px">{{dealObj.name}}</span>
-
-            </div>
-
-            <div class="card-body">
-                <el-descriptions
-                    class="margin-top"
-                    title="游戏账号信息"
-                    :column="1"
-                    border>
-                    <el-descriptions-item align="center" label-align="center" label="展示图" :rowspan="1">
-                        <el-image :src="fileOps.getFile+data.showImg" style="width: 100px; height: 100px"/>
-                    </el-descriptions-item>  
-                     
-                    <el-descriptions-item align="center" label-align="center" label="游戏名" :rowspan="1">{{data.gameName}}</el-descriptions-item>    
-                    <el-descriptions-item align="center" label-align="center" label="游戏ID" :rowspan="1">{{data.gameId}}</el-descriptions-item>    
-                    <el-descriptions-item align="center" label-align="center" label="游戏类型" :rowspan="1">{{data.gameType}}</el-descriptions-item>  
-                    <el-descriptions-item align="center" label-align="center" label="想要人数" :rowspan="1">{{data.wantNum}}</el-descriptions-item> 
-                    <el-descriptions-item align="center" label-align="center" label="账号介绍" :rowspan="1">{{data.desText}}</el-descriptions-item> 
-                    <el-descriptions-item align="center" label-align="center" label="金额" :rowspan="1"><h4>￥{{data.price}}</h4></el-descriptions-item> 
-                    
-                </el-descriptions>
-            </div>
-            <div>
-                <h4>视频展示</h4>
-                <video v-for="item in data.videoList" :key="item" :src="fileOps.getFile+item" autoplay controls></video>
-            </div>
-        </el-scrollbar> -->
-
         <template #footer>
             <div style="flex: auto">
                 <el-button @click="close">添加想要</el-button>
@@ -217,7 +174,7 @@
     }
 
     const handleClose = ()=>{
-        ElMessageBox.confirm('您还没有购买该账号，是否确认离开','提示',{
+        ElMessageBox.confirm('您还没有购买该商品，是否确认离开','提示',{
             confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning'

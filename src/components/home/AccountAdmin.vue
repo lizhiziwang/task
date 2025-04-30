@@ -2,7 +2,7 @@
     <div class="container">
         <div class="search-top" style="height: 30%;">
                 <el-form :inline="true" :model="searchTra" class="demo-form-inline" ref="searchTraForm">
-                    <el-form-item label="游戏名" prop="gameName">
+                    <el-form-item label="商品名" prop="gameName">
                         <el-input v-model="searchTra.gameName" placeholder="game name" clearable  style="width: 200px;"/>
                     </el-form-item>
                     <el-form-item label="类型" prop="gameType">
@@ -11,20 +11,14 @@
                             placeholder="请选择"
                             clearable
                             style="width: 200px;">
-
-                            <el-option label="MOBA" value="MOBA" />
-                            <el-option label="FPS" value="FPS" />
-                            <el-option label="动作" value="ACT" />
-                            <el-option label="射击" value="STG" />
-                            <el-option label="格斗" value="FTG" />
-                            <el-option label="冒险" value="AVG" />
-                            <el-option label="模拟" value="SIM" />
-                            <el-option label="角色扮演" value="RPG" />
-                            <el-option label="策略" value="SG" />
-                            <el-option label="音乐" value="MG" />
-                            <el-option label="休闲" value="CG" />
-                            <el-option label="体育" value="SG_" />
-                            <el-option label="竞速" value="RG" />
+                            <el-option label="全部" value="ALL" />
+                            <el-option label="粮油" value="MOBA" />
+                            <el-option label="果蔬" value="FPS" />
+                            <el-option label="花卉" value="ACT" />
+                            <el-option label="畜禽产品" value="STG" />
+                            <el-option label="林产品" value="FTG" />
+                            <el-option label="水产品" value="AVG" />
+                            <el-option label="其他农副产品" value="SIM" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="发布人" prop="pubUserName">
@@ -122,7 +116,7 @@
         <div class="tableData" style="height: 60%;width: 100%;">
             <el-table :data="records__" style="width: 100%" height="640">
                 <el-table-column type="index" width="70"  label="序号"></el-table-column>
-                <el-table-column prop="gameName" label="游戏名"></el-table-column>
+                <el-table-column prop="gameName" label="商品名"></el-table-column>
                 <el-table-column align="center" label="展示图" min-width="120">
 
                     <template #default="scope">
@@ -132,8 +126,8 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="pubUser" label="发布人"></el-table-column>
-                <el-table-column prop="desText" label="账号介绍" min-width="80"></el-table-column>
-                <el-table-column prop="gameId" label="游戏账号"></el-table-column>
+                <el-table-column prop="desText" label="商品介绍" min-width="80"></el-table-column>
+                <el-table-column prop="gameId" label="商品库存"></el-table-column>
                 <el-table-column prop="wantNum" label="想要人数" sortable></el-table-column>
 
                 <el-table-column label="是否还在">

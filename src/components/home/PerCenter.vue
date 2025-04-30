@@ -40,9 +40,10 @@
                     </el-descriptions>
                     <div class="mywant">
                         <h4>我的想要(购物车)</h4>
-                        <el-table :data="myWant" :default-sort="{ prop: 'price', order: 'descending' }" style="width: 100%" height="550px">
+                        <el-table :data="myWant" :highlight-current-row="true" row-key="id" @selection-change="handleSelectionChange" :default-sort="{ prop: 'price', order: 'descending' }" style="width: 100%" height="550px">
+                          <el-table-column type="selection" width="55" />
                             <el-table-column type="index" width="70"  label="序号"></el-table-column>
-                            <el-table-column prop="gameName" label="游戏名称" ></el-table-column>
+                            <el-table-column prop="gameName" label="商品名称" ></el-table-column>
                             <el-table-column align="center"  label="展示图" min-width="120">
                                 <template #default="scope">
                                     <el-image
@@ -50,49 +51,50 @@
                                         :src="fileOps.getFile+scope.row.showImg"/>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="gameId" label="游戏账号" align="center"></el-table-column>
+                            <el-table-column prop="gameId" label="剩余数（库存）" align="center"></el-table-column>
+                            <el-table-column prop="unit" label="单位" align="center"></el-table-column>
                             <el-table-column prop="desText" label="账号介绍" width="300" align="center"></el-table-column>
                             <el-table-column prop="price" label="价格" sortable></el-table-column>
-                            <el-table-column prop="createTime" label="出售时间" sortable></el-table-column>
+                            <el-table-column prop="createTime" label="发布时间" sortable></el-table-column>
                             <el-table-column align="center" fixed="right" label="操作" min-width="120">
                                 <template #default="scope">
-                                    <el-button link type="primary" size="small" @click="addOrder(scope.row)">
-                                        下单
-                                    </el-button>
                                     <el-button link type="primary" size="small" @click="gameAccountInfo_(scope.row)">详情</el-button>
                                     <el-button link type="primary" size="small" @click="deleteWant(scope.row.id)">删除</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <div style="display: flex; justify-content: flex-end;">
+                        <div style="display: flex; justify-content: flex-end;margin-top: 20px">
                             <el-pagination
                                 v-model:current-page="wantPageParams.current"
                                 v-model:page-size="wantPageParams.size"
                                 :page-sizes="[5,10, 20, 40, 60]"
-                                :size="wantPageParams.size"
+                                :size="'default'"
                                 layout="total, sizes, prev, pager, next, jumper"
                                 :total="wantPageParams.total"
                                 @size-change="wantListInit()"
                                 @current-change="wantListInit()"
                                 />
+                          <el-button type="primary"  @click="allAddOrder()" style="margin-right: 20px;margin-left: 20px">下单</el-button>
+                          <el-button type="danger"  @click="allRemove" style="margin-right: 20px;">删除</el-button>
+
                         </div>
                     </div>
                     <div class="buyRecord">
                         <h4>订单记录</h4>
-                        <el-table :data="buyRecords" style="width: 100%" height="550px">
-                            <el-table-column type="index" width="70"  label="序号"></el-table-column>
-                            <el-table-column prop="id" width="200" label="订单号"></el-table-column>
-                            <el-table-column align="center"  label="展示图" min-width="120">
-                                <template #default="scope">
-                                    <el-image
-                                        style="width: 140px; height: 80px"
-                                        :src="fileOps.getFile+scope.row.showImg"/>
-                                </template>
-                            </el-table-column>
+                        <el-table :data="buyRecords" :size="large" style="width: 100%" height="550px">
+                            <el-table-column type="index" min-width="20"  label="序号"></el-table-column>
+                            <el-table-column prop="id"  label="订单号"></el-table-column>
+<!--                            <el-table-column align="center"  label="展示图" min-width="120">-->
+<!--                                <template #default="scope">-->
+<!--                                    <el-image-->
+<!--                                        style="width: 140px; height: 80px"-->
+<!--                                        :src="fileOps.getFile+scope.row.showImg"/>-->
+<!--                                </template>-->
+<!--                            </el-table-column>-->
                             <el-table-column prop="state_" label="订单状态" sortable></el-table-column>
                             <el-table-column prop="createTime" label="下单时间" sortable></el-table-column>
                             <el-table-column prop="sum" label="订单金额" sortable></el-table-column>
-                            <el-table-column align="center" fixed="right" label="操作" min-width="120">
+                            <el-table-column align="center" fixed="right" label="操作" >
                                 <template #default="scope">
                                     <el-button link type="primary" size="small" @click="gameAccountInfo_2(scope.row)">详情</el-button>
                                     <el-button link 
@@ -113,7 +115,7 @@
                                 v-model:current-page="RecordPageParams.current"
                                 v-model:page-size="RecordPageParams.size"
                                 :page-sizes="[5,10, 20, 40, 60]"
-                                :size="RecordPageParams.size"
+                                :size="'default'"
                                 layout="total, sizes, prev, pager, next, jumper"
                                 :total="RecordPageParams.total"
                                 @size-change="orderListGet"
@@ -255,17 +257,42 @@
         </el-drawer>
         <!-- 游戏账号详细信息 -->
 
-        <el-drawer v-model="gameAccountInfo" size="45%" @open="init2" :with-header="false">
-            <ProductDet :data="currentgameAccountInfo_" :dealObj="dealObj" ></ProductDet>
+        <el-drawer v-model="gameAccountInfo" size="45%" @open="init2" @close="ckeardata" :with-header="false">
+          <h2>订单商品详情</h2>
+
+          <div v-for="item in batchAddOrders">
+            <ProductDet :data="item" :dealObj="null" ></ProductDet>
+<!--            <div>-->
+<!--              <el-input-number v-model="dataCom[index].goodNum" >-->
+<!--                <template #suffix>-->
+<!--                  <span>{{item.unit}}</span>-->
+<!--                </template>-->
+<!--              </el-input-number>-->
+<!--            </div>-->
+          </div>
+
+
+
+          <template #footer>
+            <div style="flex: auto">
+              <el-button @click="gameAccountInfo = !gameAccountInfo">取消</el-button>
+              <el-button type="primary" @click="addOrder">添加下单 </el-button>
+            </div>
+          </template>
         </el-drawer>
+      <OrderDet :open="isopen_order" @close="child_method" :dataCom="dataCom" @pay="payiii"/>
+
+
+<!--      订单处 -->
         <el-drawer v-model="currentPros" size="45%" :with-header="false">
             <ProductDet v-for="item in currentProsObj" :data="item" :dealObj="null" ></ProductDet>
         </el-drawer>
         <el-dialog
             v-model="diaOpen"
             width="600"
+            @closed="sdsder"
             align-center>
-            <order :order="orderObj" @closeTarget="diaOpen = false"></order>
+            <order :order="orderObj" @closeTarget="WANCHEGDINGDAN"></order>
         </el-dialog>
 
     </div>
@@ -278,6 +305,7 @@
     import { ElMessage, ElMessageBox,ElLoading} from 'element-plus'
     import {service} from '@/components/js/http.js';
     import ProductDet from './ProductDet.vue'
+    import OrderDet from './OrderDet.vue'
     import order from './Order.vue'
 
     let currentUser = ref(JSON.parse(sessionStorage.getItem('user')))
@@ -500,19 +528,13 @@
     let dealObj = ref({})
 
     function gameAccountInfo_ (row){
-        currentgameAccountInfo_.value = row
-        let var1 = JSON.parse(currentgameAccountInfo_.value.desFile)
-        if(var1 != null){
-            currentgameAccountInfo_.value.videoList = var1.video
-        }
+      multipleSelection.value.push(row)
+      batchAddOrders.value =  [row]
         
         gameAccountInfo.value = true
+
     }
-    function init2(){
-        service.get('/user/ava/'+currentgameAccountInfo_.value.pubUser).then(res=>{
-            dealObj.value = res.data.data
-        })
-    }
+
 
     function deleteWant(row){
         service.post('/game/want?userId='+currentUser.value.id+'&accId='+row).then(res=>{
@@ -526,35 +548,35 @@
     //下单
     let orderObj = ref({})
     let diaOpen = ref(false)
-    const addOrder = (row)=>{
-        service.post('/order?accIds='+row.id).then(res=>{
-            if(res.data.code === 200){
-                ElMessage({
-                    type: 'success',
-                    message: '下单成功！'
-                })
-
-                orderObj.value = res.data.data
-                orderObj.value.products = []
-                orderObj.value.products.push(row)
-                
-                ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                    type: 'success'
-                }).then(()=>{
-                    
-                    diaOpen.value = true
-                })
-                
-            }else{
-                ElMessage({
-                    type: 'warning',
-                    message: res.data.message
-                })
-            }
-        })
-    }
+    // const addOrder = (row)=>{
+    //     service.post('/order?accIds='+row.id).then(res=>{
+    //         if(res.data.code === 200){
+    //             ElMessage({
+    //                 type: 'success',
+    //                 message: '下单成功！'
+    //             })
+    //
+    //             orderObj.value = res.data.data
+    //             orderObj.value.products = []
+    //             orderObj.value.products.push(row)
+    //
+    //             ElMessageBox.confirm('该游戏账号已成功下单，请前往支付','提示',{
+    //                 confirmButtonText: '确认',
+    //                 cancelButtonText: '取消',
+    //                 type: 'success'
+    //             }).then(()=>{
+    //
+    //                 diaOpen.value = true
+    //             })
+    //
+    //         }else{
+    //             ElMessage({
+    //                 type: 'warning',
+    //                 message: res.data.message
+    //             })
+    //         }
+    //     })
+    // }
 
     // buyRecords
     let buyRecords = ref([])
@@ -603,29 +625,37 @@
     let currentPros = ref(false)
     let currentProsObj = ref([])
     const gameAccountInfo_2 = (item)=>{
-        let var1 = JSON.parse(item.commodityList)
+        // console.log(item)
+      currentPros.value = true;
+      let tra = item.accounts;
+      currentProsObj.value = tra
 
-        service.post('/game/list/ids',var1).then(res=>{
-            if(res.data.code==200){
-                currentProsObj.value = res.data.data
-                currentPros.value = true
-            }
-        })
     }
     const refund = (id)=>{
+      ElMessageBox.confirm(
+          '是否确定发起退款',
+          '提示',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+      ).then(()=>{
         service.post('/order/refund/'+id).then(res=>{
-            if(res.data.code===200){
-                ElMessage({
-                    type: 'success',
-                    message: '退款成功！'
-                })
-            }else{
-                ElMessage({
-                    type: 'warning',
-                    message: res.data.message
-                })
-            }
+          if(res.data.code===200){
+            ElMessage({
+              type: 'success',
+              message: '退款成功！'
+            })
+          }else{
+            ElMessage({
+              type: 'warning',
+              message: res.data.message
+            })
+          }
         })
+      })
+
     }
 
 
@@ -647,7 +677,7 @@
     }
 
 
-const getlon = ()=>{
+  const getlon = ()=>{
     console.log('浏览器地理定位。');
     if (navigator.geolocation) {
         try{
@@ -669,6 +699,92 @@ const getlon = ()=>{
         ElMessage.error('浏览器不支持地理定位。');
     }
 }
+
+    let multipleSelection = ref([])
+    const handleSelectionChange = (val)=>{
+      multipleSelection.value = val
+    }
+
+    let batchAddOrders = ref([])
+    const allAddOrder = ()=>{
+
+      gameAccountInfo.value = true
+
+      batchAddOrders.value = multipleSelection.value;
+
+    }
+    const allRemove = ()=>{
+      let accIds = [];
+      multipleSelection.value.forEach(e=>accIds.push(e.id))
+
+      let param = {
+        'userId':currentUser.value.id,
+        'accId':accIds
+      }
+      if(accIds.length===0){
+        ElMessage.warning('请选择需要清除的商品！')
+        return;
+      }
+
+      service.post('/game/batch/want',param)
+          .then(res =>{
+            if(res.data.code===200&&res.data.data){
+              wantListInit()
+              ElMessage({
+                type: 'success',
+                message: '清除成功！'
+              })
+            }
+          })
+    }
+    let dataCom = ref([])
+    function init2(){
+      multipleSelection.value.forEach(po=>{
+        dataCom.value.push({
+          goodId :po.id,
+          goodNum:1,
+          createUser:currentUser.value.id,
+          show_name:po.gameName,
+          show_png:po.showImg,
+          show_price:po.price,
+          show_unit:po.unit
+        })
+      })
+    }
+    let isopen_order = ref(false)
+    const addOrder = ()=>{
+      // order_show.value.createUser = currentUser.value.id
+
+      isopen_order.value = !isopen_order.value
+    }
+    const child_method = (arg)=>{
+      isopen_order.value = arg
+    }
+    const payiii = (arg)=>{
+      orderObj.value = arg
+      orderObj.value.products = []
+      arg.accounts.forEach(e=>{
+        orderObj.value.products.push(e)
+      })
+      // orderObj.value.products.push(arg.accounts)
+      diaOpen.value = true
+      gameAccountInfo.value = false
+      // isOpen.value = false
+    }
+
+    const ckeardata = ()=>{
+      dataCom.value = []
+      multipleSelection.value = []
+    }
+    const sdsder = ()=>{
+      wantListInit()
+    }
+    const WANCHEGDINGDAN = ()=>{
+      wantListInit()
+      diaOpen.value = false
+
+      console.log("执行回调")
+    }
 </script>
 
 <style scoped>

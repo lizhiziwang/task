@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 100%;height: 100%">
+    <div style="width: 100%;">
             <div v-if="po.dealObj!=null" style="display: flex;align-items: center;height:10%;width:100%;margin-top:20px;margin-bottom: 20px">
                 <el-popover
                     placement="top-start"
@@ -36,7 +36,7 @@
                     
                 </el-descriptions>
             </div>
-            <div>
+            <div style="min-height: 180px">
                 <h4>视频展示</h4>
                 <video v-for="item in po.data.videoList" :key="item" :src="fileOps.getFile+item" autoplay controls></video>
             </div>

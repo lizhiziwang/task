@@ -28,18 +28,26 @@
         </div>
         <h3>商品信息</h3>
         <div>
-          <el-table ref="multipleTableRef" :data="po.dataCom" :highlight-current-row="true" row-key="id" style="width: 100%" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" />
-            <el-table-column type="index" width="70"  label="序号"></el-table-column>
-            <el-table-column prop="show_name"  label="商品名"></el-table-column>
-            <el-table-column align="center"  label="展示图" min-width="120">
+          <el-table :data="po.dataCom" :highlight-current-row="true" row-key="goodId" style="width: 100%" :select-on-indeterminate="false" @selection-change="handleSelectionChange_">
+            <el-table-column type="selection"  width="35" />
+            <el-table-column type="index"  label="序号"></el-table-column>
+            <el-table-column prop="show_name" width="100" label="商品名"></el-table-column>
+            <el-table-column align="center"  min-width="100" label="展示图" >
               <template #default="scope">
                 <el-image
                     style="width: 140px; height: 80px"
                     :src="fileOps.getFile+scope.row.show_png"/>
               </template>
             </el-table-column>
-            <el-table-column prop="goodNum"  label="数量"></el-table-column>
+            <el-table-column  label="数量" min-width="100">
+              <template #default="scope">
+                <el-input-number :size="'small'" v-model="scope.row.goodNum" >
+                  <template #suffix>
+                    <span>{{data.unit}}</span>
+                  </template>
+                </el-input-number>
+              </template>
+            </el-table-column>
             <el-table-column prop="show_unit"  label="单位"></el-table-column>
             <el-table-column prop="show_price"  label="价格"></el-table-column>
 
@@ -120,9 +128,9 @@
       deliveryAddress:currentUser.location
     }
   }
-  let multipleSelection = ref([])
-  const handleSelectionChange = (val)=>{
-    multipleSelection.value = val
+  let multipleSelection_ = ref([])
+  const handleSelectionChange_ = (val)=>{
+    multipleSelection_.value = val
   }
 
   const addOrder = ()=>{
@@ -134,7 +142,7 @@
       deliveryPhone:from.value.deliveryPhone,
       goods:goods
     }
-    multipleSelection.value.forEach(e=>{
+    multipleSelection_.value.forEach(e=>{
       goods.push({
         goodId:e.goodId,
         goodNum:e.goodNum,

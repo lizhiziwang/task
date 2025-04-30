@@ -325,27 +325,27 @@
 
     const rules = reactive({
         gameName:[
-            { required: true, message: '请输入游戏的名称', trigger: 'blur' },
-            { min: 1, message: '游戏名不能为空', trigger: 'blur' },
+            { required: true, message: '请输入商品的名称', trigger: 'blur' },
+            { min: 1, message: '商品名不能为空', trigger: 'blur' },
         ],
         gameId:[
-            { required: true, message: '请输入游戏ID', trigger: 'blur' },
-            { min: 1, message: '游戏ID不能为空', trigger: 'blur' },
+            { required: true, message: '请输入商品库存', trigger: 'blur' },
+            { min: 1, message: '商品库存不能为空', trigger: 'blur' },
         ],
         desText:[
-            { required: true, message: '请输入对账号的简单介绍', trigger: 'blur' },
-            { min: 20,max:100, message: '账号介绍最少20字', trigger: 'blur' },
+            { required: true, message: '请输入对商品的简单介绍', trigger: 'blur' },
+            { min: 20,max:100, message: '商品介绍最少20字', trigger: 'blur' },
         ],
         gameType:[
-            { required: true, message: '请选择游戏类型', trigger: 'blur' },
-            { min: 1, message: '游戏类型不能为空', trigger: 'blur' },
+            { required: true, message: '请选择商品类型', trigger: 'blur' },
+            { min: 1, message: '商品类型不能为空', trigger: 'blur' },
         ],
         price:[
-            { required: true, message: '请选择游戏类型', trigger: 'blur' }
+            { required: true, message: '请选择商品类型', trigger: 'blur' }
         ]
         ,
         showImg:[
-            { required: false, message: '请上传账号展示图', trigger: 'blur' },
+            { required: false, message: '请上传商品展示图', trigger: 'blur' },
         ],
         unit:[
           {
