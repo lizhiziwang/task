@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div >
                         <h4>交易管理</h4>
                         <div style="width: 100%;">
                             <el-table :data="myTrads" style="width: 100%" height="550px">
@@ -102,25 +102,39 @@
         legend: {
             top: 'bottom'
         },
-        toolbox:{
-            show:true,
-            feature:{
-                dataView:{readOnly:false},
-                saveAsImage:{}
-            },
-            left: '75%'
-
-        },
+      tooltip: {
+        trigger: 'item'
+      },
+        // toolbox:{
+        //     show:false,
+        //     feature:{
+        //         dataView:{readOnly:false},
+        //         saveAsImage:{}
+        //     },
+        //     left: '75%'
+        //
+        // },
         series: [
             {
-            name: 'Nightingale Chart',
+            name: '交易农产品类型',
             type: 'pie',
-            radius: [50, 250],
-            center: ['50%', '50%'],
+            radius: ['50%', '80%'],
+            // center: ['50%', '50%'],
             roseType: 'area',
             itemStyle: {
                 borderRadius: 8
             },
+              label: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  fontSize: 40,
+                  fontWeight: 'bold'
+                }
+              },
             data: []
             }
         ]
@@ -130,6 +144,9 @@
         title: {
             text: '近一个月交易趋势'
         },
+      tooltip: {
+        trigger: 'item'
+      },
         toolbox:{
             show:true,
             feature:{
@@ -147,6 +164,7 @@
         },
         series: [
             {
+              name: '交易金额图',
             data: [820, 932, 901, 934, 1290, 1330, 1320],
             type: 'line',
             smooth: true
@@ -165,7 +183,6 @@
         service.get('/game/type/count?pubUser='+currentUser.id+'&pubTime=')
             .then( res => {
                 if(res.data.code === 200){
-                    console.log(res.data.data)
                     option.series[0].data = res.data.data
                     nextTick(() => {
                         var myChart = echarts.init(chartLeft.value);
