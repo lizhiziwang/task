@@ -1,5 +1,5 @@
-// const base_url = 'http://113.45.182.107:8062/file/'
-const base_url = 'http://localhost:8062/file/'
+const base_url = 'http://113.45.182.107:8062/file/'
+// const base_url = 'http://localhost:8062/file/'
 
 
 let fileOps = {
