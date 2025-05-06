@@ -1,12 +1,12 @@
 <template>
     <div class="account-vis">
         <div style="width: 100%;height: 620px;">
-            <h3>全国游戏账号交易分布</h3>
+            <h3>全国商品交易位置分析</h3>
             <div ref="mapChart" style="width:100%;height: 100%; "></div>
         </div>
 
         <div style="width: 100%;height: 520px;">
-            <h3>游戏账号可视化数据</h3>
+            <h3>交易商品可视化数据</h3>
             <div style="display: flex;align-items: center;width: 100%;height: 100%;">
                 <div ref="chartLeft" class="left" style="width: 49%;height: 100%;"></div>
                 <div ref="chartRight" class="right" style="width: 49%;height: 100%;"></div>
@@ -32,7 +32,7 @@
     let option = {
         title:{
             show: true ,
-            text: '平台账号类型分布' ,
+            text: '商品类型分布' ,
             left: 'center',
             top: '2%'
         },
@@ -82,7 +82,7 @@
 
     let option2 = {
   title: {
-    text: '游戏账号想要人数与价格分布',
+    text: '商品想要人数与价格分布',
     
   },
   grid: {
@@ -259,7 +259,7 @@
 
 var option3 = {
     title: {
-        text: '平台游戏账号交易全国位置统计 - 高德地图',
+        text: '平台商品交易全国位置统计 - 高德地图',
         subtext: 'view in map',
         left: 'center',
         textStyle: {
