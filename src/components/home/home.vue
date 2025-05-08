@@ -9,16 +9,16 @@
                 <el-carousel indicator-position="outside">
                     <!-- 可更换 -->
                     <el-carousel-item >
-                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/1.jpg' style="width: 100%"></el-image>
                     </el-carousel-item>
                     <el-carousel-item >
-                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/2.png' style="width: 100%"></el-image>
                     </el-carousel-item>
                     <el-carousel-item >
-                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/3.png' style="width: 100%"></el-image>
                     </el-carousel-item>
                     <el-carousel-item >
-                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/game_wk.jfif' style="width: 100%"></el-image>
+                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/4.jpg' style="width: 100%"></el-image>
                     </el-carousel-item>
                 </el-carousel>
                 <!-- tag -->
