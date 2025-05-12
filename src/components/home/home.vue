@@ -9,7 +9,7 @@
                 <el-carousel indicator-position="outside">
                     <!-- 可更换 -->
                     <el-carousel-item >
-                        <el-image fit="fill" src='http://113.45.182.107:8062/file/get/1.jpg' style="width: 100%"></el-image>
+                        <el-image fit="cover" :show-progress="true" src='http://113.45.182.107:8062/file/get/1.jpg' style="width: 100%"></el-image>
                     </el-carousel-item>
                     <el-carousel-item >
                         <el-image fit="fill" src='http://113.45.182.107:8062/file/get/2.png' style="width: 100%"></el-image>
@@ -33,6 +33,7 @@
                             <el-tab-pane label="林产品" name="FTG"   style="width: 400px"></el-tab-pane>
                             <el-tab-pane label="水产品" name="AVG"   style="width: 400px"></el-tab-pane>
                             <el-tab-pane label="其他农副产品" name="SIM"   style="width: 400px"></el-tab-pane>
+                            <el-tab-pane label="我的" name="MY"   style="width: 400px"></el-tab-pane>
 <!--                            <el-tab-pane label="角色扮演" name="RPG"   style="width: 400px"></el-tab-pane>-->
 <!--                            <el-tab-pane label="策略" name="SG"   style="width: 400px"></el-tab-pane>-->
 <!--                            <el-tab-pane label="音乐" name="MG"   style="width: 400px"></el-tab-pane>-->
@@ -44,10 +45,12 @@
                     </el-tabs>
                 </el-scrollbar>
                 <div  style="display: flex;width: 100%;flex-wrap: wrap;height: 80%">
+
                     <MyCard v-for="item in list" :key="item" :data = 'item' style="width: 20%;"/>
                 </div>
                 <!-- 分页组件 -->
-                <div class="pagination-block" style="float: right;" v-if="pageParams.total>0" >
+                <div class="pagination-block" style="float: right; display: flex;padding-right: 15px" v-if="pageParams.total>0" >
+
                     <el-pagination
                         v-model:current-page="pageParams.current"
                         v-model:page-size="pageParams.size"
@@ -58,6 +61,16 @@
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
                         />
+                  <el-select
+                      v-model="orderBy"
+                      placeholder="推荐方式"
+                      clearable
+                      style="width: 150px;margin-right: 15px">
+                    <el-option label="想要人数" value="want_num" />
+                    <el-option label="发布时间" value="create_time" />
+                    <el-option label="价格" value="price" />
+                  </el-select>
+                  <el-button v-model="isDesc" :icon="isDesc?ToDown:ToTop" circle :bg="true" @click="sort_"/>
                 </div>
             </el-scrollbar>
         </el-main>
@@ -69,6 +82,8 @@
 
 <script setup>
     import {ref,onMounted} from 'vue'
+    import ToTop from '../icons/ToTop.vue'
+    import ToDown from '../icons/ToDown.vue'
     import MyHeader from '../home/MyHeader.vue'
     import MyCard from '../home/MyCard.vue'
     import {service} from '@/components/js/http.js';
@@ -77,13 +92,14 @@
 
     let gameType = ref([])
     let activeName = ref('ALL')
-    let list = ref([]) 
+    let list = ref([])
+    let orderBy = ref('')
+    let isDesc = ref(true)
 
     let pageParams = ref({
         current:1,
         total:1000,
         size:20,
-        
     })
 
     let searchText = '';
@@ -122,7 +138,9 @@
             "gameType": activeName.value,
             "current":pageParams.value.current,
             "size":pageParams.value.size,
-            "desText":searchText
+            "desText":searchText,
+          "orderBy":orderBy.value,
+          "desc":isDesc.value
         }
         ).then(res=>{
             let re = res.data
@@ -156,6 +174,10 @@
         searchText = item
         getGameAccount()
         searchText = ''
+    }
+    const sort_ = ()=>{
+      isDesc.value = !isDesc.value
+      getGameAccount()
     }
     
 </script>

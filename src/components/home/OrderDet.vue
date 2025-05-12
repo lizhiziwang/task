@@ -180,6 +180,10 @@
           type: 'error',
           message: res.data.message
         })
+        nextTick(() => {
+          // Loading should be closed asynchronously
+          loadingInstance.close()
+        })
         // ElMessage.success(res.data.message)
       }
     })
