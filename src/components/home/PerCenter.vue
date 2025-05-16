@@ -79,6 +79,49 @@
 
                         </div>
                     </div>
+                  <div class="myTrad">
+                    <h4>我的商品</h4>
+                    <el-table :data="myTrads" style="width: 100%" height="550px">
+                      <el-table-column type="index" width="70"  label="序号"></el-table-column>
+                      <el-table-column prop="gameName" label="商品名"></el-table-column>
+                      <el-table-column align="center" label="展示图" min-width="120">
+                        <template #default="scope">
+                          <el-image
+                              style="width: 140px; height: 80px"
+                              :src="fileOps.getFile+scope.row.show_img"/>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="desText" label="农产品介绍"></el-table-column>
+                      <el-table-column prop="gameId" label="库存" sortable></el-table-column>
+                      <el-table-column prop="unit" label="单位"></el-table-column>
+                      <el-table-column prop="wantNum" label="想要人数" sortable></el-table-column>
+                      <el-table-column prop="price" label="金额" sortable></el-table-column>
+                      <el-table-column prop="createTime" label="发布时间" sortable></el-table-column>
+                      <el-table-column align="center" fixed="right" label="操作" >
+                        <template #default="scope">
+                          <el-button link
+                                     type="primary" size="small" @click="openTraDraw(scope.row)">编辑</el-button>
+
+                          <el-button link type="primary" size="small" @click="delete_(scope.row.id)">删除</el-button>
+                          <!-- <el-button link
+                              v-if="scope.row.state === 'NOPAID'"
+                              type="primary" size="small" @click="pay_1(scope.row.id)">支付</el-button> -->
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                    <div style="display: flex; justify-content: flex-end;">
+                      <el-pagination
+                          v-model:current-page="myTradPageParam.current"
+                          v-model:page-size="myTradPageParam.size"
+                          :page-sizes="[5,10, 20, 40, 60]"
+                          :size="'default'"
+                          layout="total, sizes, prev, pager, next, jumper"
+                          :total="myTradPageParam.total"
+                          @size-change="findMyTrad"
+                          @current-change="findMyTrad"
+                      />
+                    </div>
+                  </div>
                     <div class="buyRecord">
                         <h4>订单记录</h4>
                         <el-table :data="buyRecords" :size="large" style="width: 100%" height="550px">
@@ -209,7 +252,7 @@
                                 accept=".png,.jpe,.jpeg,.jfif"
                                 :http-request="handleUpload"
                                 :show-file-list="false"
-                                :before-upload="handleChange">
+                                :before-upload="handleChange__">
                                 <el-icon class="avatar-uploader-icon" style="width: 100px;height: 100px;"><Plus /></el-icon>
                             </el-upload>
                         </div>
@@ -295,6 +338,94 @@
             <order :order="orderObj" @closeTarget="WANCHEGDINGDAN"></order>
         </el-dialog>
 
+      <!-- 修改商品 -->
+      <el-drawer v-model="editTradOpen" direction="rtl" size="45%" :before-close="handleCloseTrad" :with-header="false" @open="initTrad">
+        <!--        <el-scrollbar height="100%"  noresize="true">-->
+        <div style="display: flex;align-items: center;height:10%">
+          <el-avatar :size="50" :src="fileOps.getFile+currentUser.avatar" style="margin-right:2%"></el-avatar>
+          <span style="font-size:30px">{{currentUser.name}}</span>
+        </div>
+        <div style="margin-top: 20px">
+          <el-form
+              style="max-width: 600px"
+              label-width="80px"
+              class="demo-ruleForm"
+              status-icon>
+            <el-form-item label="商品名称" prop="gameName">
+              <el-input v-model="currentEditTra.gameName" />
+            </el-form-item>
+            <el-form-item label="商品库存" prop="gameId">
+              <el-input v-model="currentEditTra.gameId" />
+            </el-form-item>
+            <el-form-item label="库存单位" prop="unit">
+              <el-select v-model="currentEditTra.unit" placeholder="请选择" >
+                <el-option label="斤" value="JIN" ></el-option>
+                <el-option label="千克" value="KG" ></el-option>
+                <el-option label="个" value="GE" ></el-option>
+                <el-option label="棵" value="KE" ></el-option>
+                <!--                <el-option label="棵" value="KE" ></el-option>-->
+              </el-select>
+            </el-form-item>
+            <el-form-item label="类型" prop="gameType">
+              <el-select v-model="currentEditTra.gameType" placeholder="请选择" >
+                <el-option v-for="(item,index) in gameTypesList" :key="index" :label="item.name" :value="item.name" >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="期望价格" prop="price">
+              <el-input-number v-model="currentEditTra.price"></el-input-number>
+            </el-form-item>
+            <el-form-item label="展示图" prop="showImg">
+              <el-upload
+                  class="avatar-uploader"
+                  action="#"
+                  :show-file-list="true"
+                  :on-success="handleAvatarSuccess"
+                  accept=".png,.jpe,.jpeg"
+                  :http-request="handleUpload__"
+                  :limit="1"
+                  :before-upload="handleChange__"
+                  ref="uploadBanner">
+                <img v-if="showImg_!=''" :src="showImg_" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="展示视频" prop="desFile">
+              <el-upload
+                  class="upload-demo"
+                  drag
+                  action="#"
+                  v-model:file-list="fileList"
+                  :http-request="handleUpload__"
+
+              >
+                <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                <div class="el-upload__text" style="width: 100%">
+                  拖拽文件到此处 <em>点击上传</em>
+                </div>
+                <template #tip>
+                  <div class="el-upload__tip">
+                    mp3/mp4 files with a size less than 10MB
+                  </div>
+                </template>
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="商品介绍" prop="desText">
+              <el-input v-model="ruleForm.desText" type="textarea" :autosize="{ minRows: 2, maxRows: 10 }"/>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!--        </el-scrollbar>-->
+
+        <template #footer>
+          <div style="flex: auto">
+            <el-button @click="isOpen = false">取消</el-button>
+            <el-button type="primary" @click="save">发布</el-button>
+          </div>
+        </template>
+
+      </el-drawer>
+
     </div>
 </template>
 
@@ -312,6 +443,7 @@
     let cz = ref(false)
     let tx = ref(false)
     let czSize = ref('')
+    let currentEditTra = ref({})
 
     let txSize = ref('')
     let aliId = ref('2088722008879139')
@@ -343,6 +475,7 @@
         updateUserInfo()
         wantListInit()
         orderListGet()
+        findMyTrad()
         console.log(currentUser.value)
     })
 
@@ -784,6 +917,85 @@
       diaOpen.value = false
 
       console.log("执行回调")
+    }
+
+    let myTrads = ref([])
+    let myTradPageParam = ref({
+      current: 1,
+      size: 20,
+      total: 100
+    })
+
+    const findMyTrad = ()=>{
+      service.post('/game/page_',
+          {
+            "gameType": "MY",
+            "current":myTradPageParam.value.current,
+            "size":myTradPageParam.value.size,
+          }).then(res => {
+            if (res.data.code === 200){
+              myTrads.value = res.data.data.records
+              myTradPageParam.value.size = res.data.data.size
+              myTradPageParam.value.current = res.data.data.current
+              myTradPageParam.value.total = res.data.data.total
+            }
+      })
+    }
+
+    const handleChange__ = (rawFile) => {
+      if (rawFile.type !== "image/jpeg" && rawFile.type !== "image/png") {
+        ElMessage.error("只能上传jpeg/jpg/png图片");
+        return false;
+      } else if (rawFile.size / 1024 / 1024 > 10) {
+        ElMessage.error("上传图片最大不超过10MB!");
+        return false;
+      }
+      return true;
+    };
+
+    const handleUpload__ = (file) => {
+      let fd = new FormData();
+      fd.append("files", file.file);
+      // 这里是请求上传接口
+      service.post('/game/files',fd)
+          .then(res=>{
+            if(res.data.code === 200){
+              currentEditTra.value.showImg = res.data.data[0]
+              showImg_.value = fileOps.getFile + currentEditTra.value.showImg
+            }else{
+              ElMessage.error(result.message);
+              uploadBanner.value.handleRemove(file);
+            }
+          })
+
+    };
+
+    let videos = [];
+    let fileList = ref([])
+    let uploadBanner = ref(null)
+    const handleUpload_ = ()=>{
+      let fd = new FormData();
+      console.log(fileList.value.length)
+      for (let i = 0; i < fileList.value.length; i++) {
+        fd.append("files", fileList.value[i].raw);
+        console.log(fileList.value[i].raw)
+      }
+      service.post('/game/files',fd)
+          .then(res=>{
+            if(res.data.code === 200){
+              videos.push(res.data.data[0])
+            }else{
+              ElMessage.error(result.message);
+              uploadBanner.value.handleRemove(file);
+            }
+          })
+
+    }
+
+
+    const openTraDraw = row =>{
+      currentEditTra.value = row;
+      editTradOpen.value = true
     }
 </script>
 

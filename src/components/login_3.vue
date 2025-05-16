@@ -149,11 +149,11 @@
         service.post('/user/register',registe.value)
         .then(res=>{
             if(res.data.code === 200&&res.data.data){
-                ElMessage.success('注册成功')
+                ElMessage.success('注册成功,请等待管理员审核！')
 
-                username.value = registe.value.name;
-                pwd.value = registe.value.pwd;
-                login();
+                // username.value = registe.value.name;
+                // pwd.value = registe.value.pwd;
+                // login();
             }else{
                 ElMessage.error(res.data.message)
             }

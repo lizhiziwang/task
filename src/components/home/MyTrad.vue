@@ -36,17 +36,18 @@
                                 <el-table-column prop="desText" label="农产品介绍"></el-table-column>
                                 <el-table-column prop="gameId" label="库存" sortable></el-table-column>
                               <el-table-column prop="unit" label="单位"></el-table-column>
-                              <el-table-column prop="wantNum" label="想要人数" sortable></el-table-column>
-                                <el-table-column prop="price" label="金额" sortable></el-table-column>
+                              <el-table-column prop="stateName" label="状态"></el-table-column>
+                                <el-table-column prop="maijia" label="卖家" ></el-table-column>
+                                <el-table-column prop="traPrice" label="交易金额"></el-table-column>
                                 <el-table-column align="center" fixed="right" label="操作" >
                                     <template #default="scope">
-<!--                                        <el-button link -->
-<!--                                            v-if="scope.row.state === 'PAID'|| scope.row.state === 'UNDELIVER'"-->
-<!--                                            type="primary" size="small" @click="fahuo(scope.row.orderId)">发货</el-button>-->
-<!--                                            -->
-<!--                                        <el-button link -->
-<!--                                            v-if="scope.row.state === 'RECEIVED'" -->
-<!--                                            type="primary" size="small" @click="wancheng(scope.row.orderId)">完成</el-button>-->
+                                        <el-button link
+                                            v-if="scope.row.state === 'PAID'|| scope.row.state === 'UNDELIVER'"
+                                            type="primary" size="small" @click="fahuo(scope.row.orderId)">发货</el-button>
+
+                                        <el-button link
+                                            v-if="scope.row.state === 'RECEIVED'"
+                                            type="primary" size="small" @click="wancheng(scope.row.orderId)">完成</el-button>
 
                                         <el-button link type="primary" size="small" @click="delete_(scope.row.id)">删除</el-button>
                                         <!-- <el-button link 
