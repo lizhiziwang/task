@@ -88,7 +88,7 @@
                         <template #default="scope">
                           <el-image
                               style="width: 140px; height: 80px"
-                              :src="fileOps.getFile+scope.row.show_img"/>
+                              :src="fileOps.getFile+scope.row.showImg"/>
                         </template>
                       </el-table-column>
                       <el-table-column prop="desText" label="农产品介绍"></el-table-column>
@@ -368,7 +368,7 @@
             </el-form-item>
             <el-form-item label="类型" prop="gameType">
               <el-select v-model="currentEditTra.gameType" placeholder="请选择" >
-                <el-option v-for="(item,index) in gameTypesList" :key="index" :label="item.name" :value="item.name" >
+                <el-option v-for="(item,index) in gameTypesList" :key="index" :label="item.name" :value="item.code" >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -386,7 +386,7 @@
                   :limit="1"
                   :before-upload="handleChange__"
                   ref="uploadBanner">
-                <img v-if="showImg_!=''" :src="showImg_" class="avatar" />
+                <img v-if="currentEditTra.showImg !=''" :src="fileOps.getFile + currentEditTra.showImg" class="avatar" />
                 <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
               </el-upload>
             </el-form-item>
@@ -411,7 +411,7 @@
               </el-upload>
             </el-form-item>
             <el-form-item label="商品介绍" prop="desText">
-              <el-input v-model="ruleForm.desText" type="textarea" :autosize="{ minRows: 2, maxRows: 10 }"/>
+              <el-input v-model="currentEditTra.desText" type="textarea" :autosize="{ minRows: 2, maxRows: 10 }"/>
             </el-form-item>
           </el-form>
         </div>
@@ -419,8 +419,8 @@
 
         <template #footer>
           <div style="flex: auto">
-            <el-button @click="isOpen = false">取消</el-button>
-            <el-button type="primary" @click="save">发布</el-button>
+            <el-button @click="editTradOpen = false">取消</el-button>
+            <el-button type="primary" @click="saveTra">确认</el-button>
           </div>
         </template>
 
@@ -476,6 +476,12 @@
         wantListInit()
         orderListGet()
         findMyTrad()
+      service.get('/game/type').then(res=>{
+        if(res.data.code === 200){
+          gameTypesList.value = res.data.data
+          console.log(gameTypesList.value)
+        }
+      })
         console.log(currentUser.value)
     })
 
@@ -961,7 +967,7 @@
           .then(res=>{
             if(res.data.code === 200){
               currentEditTra.value.showImg = res.data.data[0]
-              showImg_.value = fileOps.getFile + currentEditTra.value.showImg
+              // showImg_.value = fileOps.getFile + currentEditTra.value.showImg
             }else{
               ElMessage.error(result.message);
               uploadBanner.value.handleRemove(file);
@@ -991,15 +997,42 @@
           })
 
     }
-
+    let editTradOpen = ref(false)
 
     const openTraDraw = row =>{
       currentEditTra.value = row;
-      editTradOpen.value = true
+      editTradOpen.value = !editTradOpen.value
     }
+    let gameTypesList = ref([])
+    const saveTra = ()=>{
+      const loading = ElLoading.service({
+        lock: true,
+        text: '拼命加载中...',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+      service.post('/game',currentEditTra.value).then(res=>{
+        let data = res.data;
+        loading.close()
+        if(data.code===200 && data.data){
+          ElMessage.success('发布成功')
+          editTradOpen.value = !editTradOpen.value
+          currentEditTra.value = {}
+          findMyTrad()
+          // showImg_.value = ''
+        }else{
+          ElMessage.error('更新失败！请联系管理员')
+        }
+      })
+    }
+
 </script>
 
 <style scoped>
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 .common-layout{
         width: 100%;
         height: 100%;

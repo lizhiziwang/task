@@ -30,7 +30,7 @@
                                     <template #default="scope">
                                         <el-image
                                             style="width: 140px; height: 80px"
-                                            :src="fileOps.getFile+scope.row.show_img"/>
+                                            :src="fileOps.getFile+scope.row.showImg"/>
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="desText" label="农产品介绍"></el-table-column>
