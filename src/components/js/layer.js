@@ -13,8 +13,8 @@ const gaode = new TileLayer({
         // 高德影像地图
         // url: 'https://webst01.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
         // 高德矢量地图
-        // url: 'http://webst0{1-4}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=2&style=7&key=17be85abdc35ac0635cfcfe31fe10936',
-        url:'http://10.0.120.106:8062/mapserver/wms/db/clip?x={x}&y={y}&z={z}'
+        url: 'http://webst0{1-4}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=1&style=7&key=17be85abdc35ac0635cfcfe31fe10936',
+        // url:'http://10.0.120.106:8062/mapserver/wms/db/clip?x={x}&y={y}&z={z}'
         // url:'http://10.0.120.106:12050/mapserver/wms/db?x={x}&y={y}&z={z}&maptype=dark&&mapId=050121a2d4c44274b9c04d2612ad5272',
         // tileLoadFunction: function (imageTile, src) {
         //     console.log(imageTile.getImage())

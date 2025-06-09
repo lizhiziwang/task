@@ -8,6 +8,10 @@
         </div>
 
         <div id="map"  :class="is_full?'map_s1' : 'map_s2'" style="background-color: #3B3B36;">
+          <div class="wmsInput">
+            <el-input  placeholder="/api/{x}/{y}/{z};or wms" v-model="currentWMS" style="margin-right: 20px"></el-input>
+            <el-button type="primary" @click="addWMS">确定</el-button>
+          </div>
             <div class="map_select">
                 <div style="display: flex; align-items: center;">
                     <el-select
@@ -83,29 +87,25 @@
     import Vector from "ol/source/Vector"
     import View from "ol/View"
     import Projection from "ol/proj/Projection"
-    import { Tile as TileLayer } from 'ol/layer'
-    import { TileWMS, XYZ } from 'ol/source'
     import { Vector as VectorLayer } from 'ol/layer';
-    import ElMessage from 'element-plus'
     import Style from 'ol/style/Style'
-    import Fill from 'ol/style/Fill'
-    import Stroke  from 'ol/style/Stroke'
-    // import Fill from 'ol/style/Fill'
-    import { toContext } from 'ol/render';
 
     import Icon from 'ol/style/Icon'
-    import FullScreen from 'ol/control/FullScreen'
     import Draw from 'ol/interaction/Draw'
 
-    import {service} from '@/components/js/http.js';
     import fileOps from '@/components/js/file.js'
     import {maps} from '@/components/js/layer.js'
+    import {ElMessage} from "element-plus";
+    import TileLayer from "ol/layer/Tile";
+    import {TileWMS, XYZ} from "ol/source";
 
     let map = null;
-    //429628.875,2216529.634
     let wkt = 'POINT(113.90149133406717 22.719296937819504)'
 
     let coord = ref('113.90149133406717,22.719296937819504')
+    let currentWMS = ref('http://10.0.20.144:31080/geoserver/zsh/wms?layers=zsh:pipe_gcj&viewparams=tenantId:1234567');
+    // let currentWMS = ref('\n' +
+    //     'http://10.0.20.144:31080/geoserver/xingyu/wms?SERVICE=WMS&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=xingyu%3Apipe&TILED=true&CQL_FILTER=data_domain%20like%20%27%25SUPPLY%25%27&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&');
 
     // 矢量点图层的建立
     let format = new WKT();
@@ -126,7 +126,7 @@
     onMounted(() => {
         initMap()
         //添加绘制的矢量图层
-        map.addLayer(vectorLayer)
+        // map.addLayer(vectorLayer)
        
 
         map.on('singleclick', (e) =>{
@@ -142,7 +142,7 @@
             //     const z = tileCoord[0]; 
             //     console.log("x: " + x + ", y: " + y + ", z: " + z);
             // });
-            console.log(e.coordinate)
+            // console.log(e.coordinate)
         });
         // draw_line_pic();
         // fetchData('http://10.0.120.106:8062/mapserver/line')
@@ -176,13 +176,12 @@
         let all = map.getAllLayers()
         // map.removeLayer(all[0])
         // map.addLayer(maps[value]);
+      console.log(all)
         for(let i = 0;i<all.length;i++){
             map.removeLayer(all[i])
         }
         all[0] = maps[value]
-        for(let i = 0;i<all.length;i++){
-            map.addLayer(all[i])
-        }
+        map.setLayers(all)
         
     }
     //坐标定位
@@ -338,6 +337,59 @@
             }
         }
     }
+    let addedUrl = [];
+    const addWMS = ()=>{
+      let url = currentWMS.value;
+      if(url.length===0){
+        ElMessage({
+          message:'请输入服务的地址！',
+          type:'error'
+        })
+      }
+      // 使用 some 方法检查重复项
+      if (addedUrl.some(e => e === url)) {
+        ElMessage({
+          message: '当前url已添加至地图',
+          type: 'error'
+        });
+        return; // 发现重复项后，直接返回
+      }
+
+      if(url.toString().indexOf('/{x}/{y}/{z}')!==-1){
+        const wms = new TileLayer({
+          source: new XYZ({
+            url: url,
+          })
+        });
+        map.addLayer(wms);
+      }
+      if(url.toString().indexOf('/wms')!==-1){
+        const  wms = new TileLayer({
+          source: new TileWMS({
+            //不能设置为0，否则地图不展示。
+            ratio: 1,
+            url: url,
+            params:{
+              VERSION: '1.1.1',
+              SERVICE:'WMS',
+              REQUEST:'GetMap',
+              FORMAT:'image/png',
+              TRANSPARENT:true,
+              TILED:true,
+            },
+            serverType: "geoserver",
+          }),
+        });
+        map.addLayer(wms);
+      }
+      ElMessage({
+        message:'添加成功！',
+        type:'success'
+      });
+      addedUrl.push(url);
+      currentWMS.value = '';
+
+    }
 </script>
 
 
@@ -369,5 +421,14 @@
         top: 2%;
         right: 5%;
         z-index: 999;
+    }
+    .wmsInput {
+      position: absolute;
+      z-index: 99;
+      width: 500px;
+      display: flex;
+      margin-top: 1%;
+      left: 50%;
+      transform: translateX(-50%);
     }
 </style>
