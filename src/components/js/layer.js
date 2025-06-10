@@ -121,14 +121,29 @@ const google = new TileLayer({
         wrapX: false
     })
 })
-
+const arcgis_yx = new TileLayer({
+    title: "ArcGIS影像",
+    source: new XYZ({
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        wrapX: false
+    })
+})
+const arcgis_jd = new TileLayer({
+    title: "ArcGIS街道",
+    source: new XYZ({
+        url: "https://server.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}.png",
+        wrapX: false
+    })
+})
 
 const maps = {
     "高德地图":gaode,
     "高德影像":geode_yx,
     "天地图":layerGroup,
     "百度地图":baidu,
-    "谷歌地图":google
+    "谷歌地图":google,
+    "ArcGIS影像":arcgis_yx,
+    "ArcGIS街道":arcgis_jd,
 }
 
 export {maps};

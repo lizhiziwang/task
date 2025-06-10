@@ -1,12 +1,5 @@
 <template>
     <div style="width: 100%; height: 100%;position: relative;">
-        <div style="width: 100%; height: 7%;display: flex;justify-content: center;flex-direction: column;align-items: center;">
-            <div >
-                坐标定位：<el-input v-model="coord" style="width: 240px" placeholder="例：113,23" />
-                <el-button type="primary" @click="drawPoint" style="margin-left: 10px;">确定</el-button>
-            </div>
-        </div>
-
         <div id="map"  :class="is_full?'map_s1' : 'map_s2'" style="background-color: #3B3B36;">
           <div class="wmsInput">
             <el-input  placeholder="/api/{x}/{y}/{z};or wms" v-model="currentWMS" style="margin-right: 20px"></el-input>
@@ -25,6 +18,8 @@
                         <el-option label="百度地图" value="百度地图"/>
                         <el-option label="天地图" value="天地图"/>
                         <el-option label="谷歌地图" value="谷歌地图"/>
+                        <el-option label="ArcGIS影像" value="ArcGIS影像"/>
+                        <el-option label="ArcGIS街道" value="ArcGIS街道"/>
                     </el-select>
                 </div>
             </div>
@@ -54,28 +49,54 @@
             </div>
                 <!-- <div ref="full_screen_" id="full-screen"></div> -->
         </div>
-        <div style="width: 100%; height: 10%;display: flex;justify-content: center;align-items: center;">
-            <div>
-                当前绘制图形(wkt)：
-            </div>
-            <div >
-                <el-input type="textarea" v-model="current_wkt" style="width: 640px"  />
-            </div>
-            <div style="margin-left: 20px;">
-                <el-button type="primary" @click="drawWkt">绘制</el-button>
-            </div>
-        </div>
-        <div style="width: 100%; height: 10%;display: flex;justify-content: center;align-items: center;">
-            <div>
-                当前绘制图形(geojson)：
-            </div>
-            <div >
-                <el-input type="textarea" v-model="draw_json"  resize ="both" style="width: 640px;height: 100%;"/>
-            </div>
-            <div style="margin-left: 20px;">
-                <el-button type="primary" @click="draw_json_func">绘制</el-button>
-            </div>
-        </div>
+
+          <div class="fundiv">
+            <el-scrollbar height="100%">
+              <el-descriptions
+                  title="操作功能"
+                  :column="1"
+                  size="large"
+                  border
+              >
+                <el-descriptions-item label="坐标定位">
+
+                  <div style="width: 100%; height: 7%;display: flex;justify-content: center;flex-direction: column;align-items: center;">
+                    <div >
+                      <el-input v-model="coord" style="width: 240px" placeholder="例：113,23" />
+                      <el-button type="primary" @click="drawPoint" style="margin-left: 10px;">确定</el-button>
+                    </div>
+                  </div>
+                </el-descriptions-item>
+                <el-descriptions-item label="当前绘制图形(wkt)">
+                  <div style="width: 100%; height: 10%;display: flex;justify-content: center;align-items: center;">
+
+                    <div >
+                      <el-input type="textarea" v-model="current_wkt" style="width: 640px"  />
+                    </div>
+                    <div style="margin-left: 20px;">
+                      <el-button type="primary" @click="drawWkt">绘制</el-button>
+                    </div>
+                  </div>
+                </el-descriptions-item>
+                <el-descriptions-item label="当前绘制图形(geojson)">
+                  <div style="width: 100%; height: 10%;display: flex;justify-content: center;align-items: center;">
+                    <div >
+                      <el-input type="textarea" v-model="draw_json"  resize ="both" style="width: 640px;height: 100%;"/>
+                    </div>
+                    <div style="margin-left: 20px;">
+                      <el-button type="primary" @click="draw_json_func">绘制</el-button>
+                    </div>
+                  </div>
+                </el-descriptions-item>
+
+              </el-descriptions>
+            </el-scrollbar>
+
+          </div>
+
+
+
+
     </div>
 </template>
 
@@ -93,7 +114,6 @@
     import Icon from 'ol/style/Icon'
     import Draw from 'ol/interaction/Draw'
 
-    import fileOps from '@/components/js/file.js'
     import {maps} from '@/components/js/layer.js'
     import {ElMessage} from "element-plus";
     import TileLayer from "ol/layer/Tile";
@@ -104,9 +124,6 @@
 
     let coord = ref('113.90149133406717,22.719296937819504')
     let currentWMS = ref('http://10.0.20.144:31080/geoserver/zsh/wms?layers=zsh:pipe_gcj&viewparams=tenantId:1234567');
-    // let currentWMS = ref('\n' +
-    //     'http://10.0.20.144:31080/geoserver/xingyu/wms?SERVICE=WMS&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=xingyu%3Apipe&TILED=true&CQL_FILTER=data_domain%20like%20%27%25SUPPLY%25%27&WIDTH=256&HEIGHT=256&SRS=EPSG%3A3857&STYLES=&');
-
     // 矢量点图层的建立
     let format = new WKT();
     let feature = format.readFeature(wkt,{
@@ -126,10 +143,10 @@
     onMounted(() => {
         initMap()
         //添加绘制的矢量图层
-        // map.addLayer(vectorLayer)
+        map.addLayer(vectorLayer)
        
 
-        map.on('singleclick', (e) =>{
+        // map.on('singleclick', (e) =>{
             // var tileLayer = map.getLayers().item(0);
             // var source = tileLayer.getSource();
             // var tileGrid = source.getTileGrid();
@@ -143,7 +160,7 @@
             //     console.log("x: " + x + ", y: " + y + ", z: " + z);
             // });
             // console.log(e.coordinate)
-        });
+        // });
         // draw_line_pic();
         // fetchData('http://10.0.120.106:8062/mapserver/line')
     })
@@ -192,14 +209,14 @@
         console.log(wkt_)
 
         let rt = format.readFeature(wkt_,
-        // {
-        //     dataProjection: 'EPSG:4326', //	当前坐标系
-        //     featureProjection: 'EPSG:3857'// 目标坐标系
-        // }
+        {
+            dataProjection: 'EPSG:4326', //	当前坐标系
+            featureProjection: 'EPSG:3857'// 目标坐标系
+        }
         );
         var style = new Style({
             image: new Icon({
-                src: fileOps.getFile+'location.png',//图标路径
+                src: 'src/assets/location.png',//图标路径
                 anchor: [0.5, 1],//锚点
                 scale: 0.16,//大小
                 rotation: 0	//旋转角度
@@ -430,5 +447,10 @@
       margin-top: 1%;
       left: 50%;
       transform: translateX(-50%);
+    }
+    .fundiv{
+      width: 80%; height: 40%;
+      transform: translateX(10%);
+      padding-top: 10px;
     }
 </style>
