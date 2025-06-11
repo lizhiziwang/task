@@ -3,7 +3,8 @@
         <div id="map"  :class="is_full?'map_s1' : 'map_s2'" style="background-color: #3B3B36;">
           <div class="wmsInput">
             <el-input  placeholder="/api/{x}/{y}/{z};or wms" v-model="currentWMS" style="margin-right: 20px"></el-input>
-            <el-button type="primary" @click="addWMS">确定</el-button>
+            <el-button type="primary" @click="addWMS" style="margin-right: 20px">确定</el-button>
+            <el-switch v-model="gridOpen" @change="gridSwitchChange"/>
           </div>
             <div class="map_select">
                 <div style="display: flex; align-items: center;">
@@ -118,6 +119,10 @@
     import {ElMessage} from "element-plus";
     import TileLayer from "ol/layer/Tile";
     import {TileWMS, XYZ} from "ol/source";
+    import Tile from "ol/layer/Tile";
+    import TileGrid from "ol/tilegrid/TileGrid";
+    import Stroke from "ol/style/Stroke";
+    import Fill from "ol/style/Fill";
 
     let map = null;
     let wkt = 'POINT(113.90149133406717 22.719296937819504)'
@@ -130,39 +135,21 @@
         dataProjection: 'EPSG:4326', //	目标坐标系
         featureProjection: 'EPSG:3857'// 当前坐标系
     });
-    var source = new Vector({
-        features: [feature],
-    })
+    const source = new Vector({
+      features: [feature],
+    });
 
-    var vectorLayer = new VectorLayer({
-        source: source,
-    })
+    const vectorLayer = new VectorLayer({
+      source: source,
+    });
     // feature.setStyle(style)
     // 矢量点图层的建立
 
     onMounted(() => {
-        initMap()
-        //添加绘制的矢量图层
-        map.addLayer(vectorLayer)
-       
-
-        // map.on('singleclick', (e) =>{
-            // var tileLayer = map.getLayers().item(0);
-            // var source = tileLayer.getSource();
-            // var tileGrid = source.getTileGrid();
-            // let extent = map.getView().calculateExtent(map.getSize())
-            // let zoom = map.getView().getZoom();
-
-            // tileGrid.forEachTileCoord(tileGrid.getExtent(), zoom, function(tileCoord) {
-            //     const x = tileCoord[1]; 
-            //     const y = tileCoord[2]; 
-            //     const z = tileCoord[0]; 
-            //     console.log("x: " + x + ", y: " + y + ", z: " + z);
-            // });
-            // console.log(e.coordinate)
-        // });
-        // draw_line_pic();
-        // fetchData('http://10.0.120.106:8062/mapserver/line')
+      initMap()
+      //添加绘制的矢量图层
+      map.addLayer(vectorLayer)
+      map.addLayer(vectorLayer__);
     })
     // 初始化底图
     const initMap = () => {
@@ -407,6 +394,99 @@
       currentWMS.value = '';
 
     }
+
+    const source__ = new Vector({
+      features: [],
+    });
+
+    const vectorLayer__ = new VectorLayer({
+      source: source__,
+      style:new Style({
+        stroke:new Stroke({
+          color:'rgba(0, 0, 255, 0.5)',
+          width:1.5
+        }),
+        fill:new Fill({color: 'rgba(0, 0, 0, 0)'})
+
+      })
+    });
+    let format__ = new WKT();
+    let gridOpen = ref(false)
+    let lastZoom ;
+
+    // 绘制网格图
+    const drawGrid = () =>{
+      source__.clear();
+
+      let tileLayer = map.getAllLayers()[0]
+      let sourceLayer = tileLayer.getSource()
+
+      if(sourceLayer instanceof XYZ){
+        let tileGrid = sourceLayer.getTileGrid();
+        let view = map.getView()
+        let zoom = Math.round(view.getZoom());
+        let extent = view.calculateExtent(map.getSize())
+        let tileRange = tileGrid.getTileRangeForExtentAndZ(extent, zoom);
+
+        for (let x = tileRange.minX; x <= tileRange.maxX; x++) {
+          for (let y = tileRange.minY; y <= tileRange.maxY; y++) {
+            let tile = tileGrid.getTileCoordExtent([zoom,x,y])
+
+            let wkt = "POLYGON(("+tile[0]+" "+tile[1]+ ","+ tile[2]+" "+tile[1]+","+tile[2]+" "+tile[3]+","+tile[0]+" "+tile[3]+","+tile[0]+" "+tile[1]+"))";
+
+            let feature = format__.readFeature(wkt);
+
+
+            source__.addFeature(feature)
+          }
+        }
+      }
+
+    }
+
+    let gridSwitchChange = () => {
+      let view = map.getView()
+      if(gridOpen.value){
+        // 地图移动结束后（包括缩放和拖动）重新绘制
+        drawGrid();
+        map.on('moveend', drawGrid);
+
+        lastZoom = view.getZoom()
+
+        view.on('change:resolution', viewZ);
+
+      }else {
+        source__.clear();
+        //移除 moveend事件
+        map.un('moveend',drawGrid);
+        view.un('change:resolution', viewZ);
+      }
+
+    }
+    const viewZ = (e)=>{
+      // 获取当前缩放级别
+      let currentZoom = e.target.getZoom();
+      // console.log('当前缩放级别:', currentZoom, '上次缩放级别:', lastZoom);
+
+      // 判断是放大还是缩小
+      let roundedZoom;
+      if (currentZoom > lastZoom) {
+        // 放大操作，向上取整
+        roundedZoom = Math.ceil(currentZoom);
+      } else {
+        // 缩小操作，向下取整
+        roundedZoom = Math.floor(currentZoom);
+      }
+      // 只有当取整后的缩放级别与当前不同时才设置
+      if (roundedZoom !== currentZoom) {
+        // 设置取整后的缩放级别
+        map.getView().setZoom(roundedZoom);
+      }
+
+      // 更新上次的缩放级别
+      lastZoom = roundedZoom;
+    }
+
 </script>
 
 
@@ -442,7 +522,7 @@
     .wmsInput {
       position: absolute;
       z-index: 99;
-      width: 500px;
+      width: 600px;
       display: flex;
       margin-top: 1%;
       left: 50%;
