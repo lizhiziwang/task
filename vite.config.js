@@ -12,7 +12,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         // target: 'http://113.45.182.107:8062', //对应自己的接口
-        target: 'http://localhost:8062', //对应自己的接口
+        target: 'http://10.0.120.106:8062', //对应自己的接口
 
         // target: 'http://10.0.120.106:12050', //对应自己的接口
         changeOrigin: true,

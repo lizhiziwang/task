@@ -8,7 +8,7 @@ import 'element-plus/dist/index.css';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import axios from 'axios'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import * as echarts from 'echarts'
+// import * as echarts from 'echarts'
 
 // main.js
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
@@ -39,7 +39,7 @@ app.config.globalProperties.$axios = axios
 
 app.use(router);
 app.use(ElementPlus);
-app.use(echarts)
+// app.use(echarts)
 app.use(VMdPreview);
 
 
