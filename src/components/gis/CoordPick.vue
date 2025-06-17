@@ -167,6 +167,7 @@ import {ref, onMounted} from 'vue'
     import {maps} from "../js/layer";
     import {transform} from "../js/transform";
     import {easeOut} from "ol/easing";
+    import {TileDebug} from "ol/source.js";
 
     let map = null;
     let wkt = 'POINT(113.90149133406717 22.719296937819504)'
@@ -193,7 +194,7 @@ import {ref, onMounted} from 'vue'
       initMap()
       //添加绘制的矢量图层
       map.addLayer(vectorLayer)
-      map.addLayer(vectorLayer__);
+      // map.addLayer(vectorLayer__);
     })
     // 初始化底图
     const initMap = () => {
@@ -453,97 +454,61 @@ import {ref, onMounted} from 'vue'
 
     }
 
-    const source__ = new Vector({
-      features: [],
-    });
-
-    const vectorLayer__ = new VectorLayer({
-      source: source__,
-      style:new Style({
-        stroke:new Stroke({
-          color:'rgba(0, 0, 255, 0.5)',
-          width:1.5
-        }),
-        fill:new Fill({color: 'rgba(0, 0, 0, 0)'})
-
-      })
-    });
-    let format__ = new WKT();
+    // const source__ = new Vector({
+    //   features: [],
+    // });
+    //
+    // const vectorLayer__ = new VectorLayer({
+    //   source: source__,
+    //   style:new Style({
+    //     stroke:new Stroke({
+    //       color:'rgba(0, 0, 255, 0.5)',
+    //       width:1.5
+    //     }),
+    //     fill:new Fill({color: 'rgba(0, 0, 0, 0)'})
+    //
+    //   })
+    // });
+    // let format__ = new WKT();
     let gridOpen = ref(false)
-    let lastZoom ;
-
+    // let lastZoom ;
+    let l = new TileLayer({
+      source: new TileDebug(),
+    });
     // 绘制网格图
-    const drawGrid = () =>{
-      source__.clear();
-
-      let tileLayer = map.getAllLayers()[0]
-      let sourceLayer = tileLayer.getSource()
-
-      if(sourceLayer instanceof XYZ){
-        let tileGrid = sourceLayer.getTileGrid();
-        let view = map.getView()
-        let zoom = Math.round(view.getZoom());
-        let extent = view.calculateExtent(map.getSize())
-        let tileRange = tileGrid.getTileRangeForExtentAndZ(extent, zoom);
-
-        for (let x = tileRange.minX; x <= tileRange.maxX; x++) {
-          for (let y = tileRange.minY; y <= tileRange.maxY; y++) {
-            let tile = tileGrid.getTileCoordExtent([zoom,x,y])
-
-            let wkt = "POLYGON(("+tile[0]+" "+tile[1]+ ","+ tile[2]+" "+tile[1]+","+tile[2]+" "+tile[3]+","+tile[0]+" "+tile[3]+","+tile[0]+" "+tile[1]+"))";
-
-            let feature = format__.readFeature(wkt);
-
-
-            source__.addFeature(feature)
-          }
-        }
-      }
-
-    }
 
     let gridSwitchChange = () => {
-      let view = map.getView()
       if(gridOpen.value){
-        // 地图移动结束后（包括缩放和拖动）重新绘制
-        drawGrid();
-        map.on('moveend', drawGrid);
-
-        lastZoom = view.getZoom()
-
-        view.on('change:resolution', viewZ);
+        map.addLayer(l);
 
       }else {
-        source__.clear();
-        //移除 moveend事件
-        map.un('moveend',drawGrid);
-        view.un('change:resolution', viewZ);
+        map.removeLayer(l);
       }
 
     }
-    const viewZ = (e)=>{
-      // 获取当前缩放级别
-      let currentZoom = e.target.getZoom();
-      // console.log('当前缩放级别:', currentZoom, '上次缩放级别:', lastZoom);
-
-      // 判断是放大还是缩小
-      let roundedZoom;
-      if (currentZoom > lastZoom) {
-        // 放大操作，向上取整
-        roundedZoom = Math.ceil(currentZoom);
-      } else {
-        // 缩小操作，向下取整
-        roundedZoom = Math.floor(currentZoom);
-      }
-      // 只有当取整后的缩放级别与当前不同时才设置
-      if (roundedZoom !== currentZoom) {
-        // 设置取整后的缩放级别
-        map.getView().setZoom(roundedZoom);
-      }
-
-      // 更新上次的缩放级别
-      lastZoom = roundedZoom;
-    }
+    // const viewZ = (e)=>{
+    //   // 获取当前缩放级别
+    //   let currentZoom = e.target.getZoom();
+    //   // console.log('当前缩放级别:', currentZoom, '上次缩放级别:', lastZoom);
+    //
+    //   // 判断是放大还是缩小
+    //   let roundedZoom;
+    //   if (currentZoom > lastZoom) {
+    //     // 放大操作，向上取整
+    //     roundedZoom = Math.ceil(currentZoom);
+    //   } else {
+    //     // 缩小操作，向下取整
+    //     roundedZoom = Math.floor(currentZoom);
+    //   }
+    //   // 只有当取整后的缩放级别与当前不同时才设置
+    //   if (roundedZoom !== currentZoom) {
+    //     // 设置取整后的缩放级别
+    //     map.getView().setZoom(roundedZoom);
+    //   }
+    //
+    //   // 更新上次的缩放级别
+    //   lastZoom = roundedZoom;
+    // }
 
     /**
      * 以下为坐标转换相关
@@ -571,7 +536,9 @@ import {ref, onMounted} from 'vue'
     }
 
     const transf = () =>{
-      yanzheng();
+      if (yanzheng() === 0){
+        return 0;
+      }
       let t = source_value.value.toString();
       let coord = t.split(",")
 
@@ -591,7 +558,9 @@ import {ref, onMounted} from 'vue'
     }
 
     const dingwei = ()=>{
-      yanzheng();
+      if (yanzheng() === 0){
+        return 0;
+      }
       let methodName = original.value + "2" + "mct";
       let t = source_value.value.toString();
       let coord = t.split(",")
