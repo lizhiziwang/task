@@ -21,6 +21,9 @@
                   <el-option label="谷歌地图" value="谷歌地图"/>
                   <el-option label="ArcGIS影像" value="ArcGIS影像"/>
                   <el-option label="ArcGIS街道" value="ArcGIS街道"/>
+                  <el-option label="ArcGIS暗黑" value="ArcGIS暗黑"/>
+                  <el-option label="中科星图（影像）" value="中科星图（影像）"/>
+                  <el-option label="中科星图（矢量）" value="中科星图（矢量）"/>
                 </el-select>
               </div>
             </div>

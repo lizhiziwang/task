@@ -6,6 +6,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import * as Cesium from 'cesium'
+import {SceneMode} from "cesium";
 
   let viewer;
 
@@ -43,6 +44,7 @@ onMounted(() => {
   console.log(viewer.imageryProvider);
   // 清除默认图层
   viewer.imageryLayers.removeAll();
+  viewer.scene.mode = SceneMode.COLUMBUS_VIEW;
 
   let tiandiyu = viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
     url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=f0ef2118b8ccd76bfd9acc8217e5dab0",
@@ -103,7 +105,7 @@ onMounted(() => {
 
   const entity = viewer.entities.add({
     name: "aomen.glb",
-    position: Cesium.Cartesian3.fromDegrees(		113.56320664971413,22.163772045553486, 0),
+    position: Cesium.Cartesian3.fromDegrees(		113.56320664971413,22.163772045553486, -100),
     model: {
       uri: "src/assets/aomen.glb",
       minimumPixelSize: 128,

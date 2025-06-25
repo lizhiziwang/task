@@ -135,6 +135,28 @@ const arcgis_jd = new TileLayer({
         wrapX: false
     })
 })
+const arcgis_ah = new TileLayer({
+    title: "ArcGIS暗黑",
+    source: new XYZ({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/WMTS/tile/1.0.0/Canvas_World_Dark_Gray_Base/default/default028mm/{z}/{y}/{x}/",
+        wrapX: false
+    })
+})
+
+const var1 = new TileLayer({
+    title: "中科星图（影像）",
+    source: new XYZ({
+        url: "https://tiles1.geovisearth.com/base/v1/img/{z}/{x}/{y}",
+        wrapX: false
+    })
+})
+const var2 = new TileLayer({
+    title: "中科星图（矢量）",
+    source: new XYZ({
+        url: "https://tiles{1-3}.geovisearth.com/base/v1/vec/{z}/{x}/{y}",
+        wrapX: false
+    })
+})
 
 const maps = {
     "高德地图":gaode,
@@ -144,6 +166,9 @@ const maps = {
     "谷歌地图":google,
     "ArcGIS影像":arcgis_yx,
     "ArcGIS街道":arcgis_jd,
+    "ArcGIS暗黑":arcgis_ah,
+    "中科星图（影像）":var1,
+    "中科星图（矢量）":var2,
 }
 
 export {maps};
