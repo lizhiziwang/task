@@ -165,14 +165,20 @@ import {ref, onMounted} from 'vue'
     import {ElMessage} from "element-plus";
     import TileLayer from "ol/layer/Tile";
     import {TileWMS, XYZ} from "ol/source";
-    import Stroke from "ol/style/Stroke";
-    import Fill from "ol/style/Fill";
-    import {maps} from "../js/layer";
+    import {maps,getMapLayer} from "../js/layer";
     import {transform} from "../js/transform";
     import {easeOut} from "ol/easing";
     import {TileDebug} from "ol/source.js";
+    import {OverviewMap, defaults as defaultControls} from 'ol/control.js';
+    import {
+      DragRotateAndZoom,
+      defaults as defaultInteractions,
+    } from 'ol/interaction.js';
+
+
 
     let map = null;
+    let currentMapDi = null;
     let wkt = 'POINT(113.90149133406717 22.719296937819504)'
 
     let coord = ref('113.90149133406717,22.719296937819504')
@@ -186,15 +192,16 @@ import {ref, onMounted} from 'vue'
     const source = new Vector({
       features: [feature],
     });
+    let overviewMapControl = null;
 
     const vectorLayer = new VectorLayer({
       source: source,
     });
-    // feature.setStyle(style)
-    // 矢量点图层的建立
 
     onMounted(() => {
-      initMap()
+      // nextTick(() => {
+        initMap();
+      // });
       //添加绘制的矢量图层
       map.addLayer(vectorLayer)
       // map.addLayer(vectorLayer__);
@@ -207,20 +214,33 @@ import {ref, onMounted} from 'vue'
             axisOrientation: 'neu',
             global: false
         });
+      currentMapDi = getMapLayer("高德地图");
+      const vire_ = new View({
+        projection:projection,
+        //地图中心点
+        center: [1.2715915047398917E7,3453476.714017157],
+        zoom: 8,
+        minZoom:1, // 地图缩放最小级别
+      });
+      overviewMapControl = new OverviewMap({
+        // see in overviewmap-custom.html to see the custom CSS used
+        className: 'ol-overviewmap ol-custom-overviewmap',
+        layers: [currentMapDi],
+        collapsed: false,
+        collapsible: true ,// 允许折叠
+        label: 'open',
+        collapseLabel: 'close'
+      });
         map = new Map({
         //地图容器ID
             target: "map",
             //引入地图
             layers: [maps["高德地图"]],
-            view: new View({
-                projection:projection,
-                //地图中心点
-                center: [1.2715915047398917E7,3453476.714017157],
-                zoom: 8,
-                minZoom:1, // 地图缩放最小级别
-            }),
+            view: vire_ ,
             
         });
+        map.addControl(overviewMapControl);
+        map.addInteraction(new DragRotateAndZoom())
     }
     let current_map = ref('高德地图')
     //更换底图
@@ -233,6 +253,16 @@ import {ref, onMounted} from 'vue'
             map.removeLayer(all[i])
         }
         all[0] = maps[value]
+        currentMapDi = getMapLayer(value)
+        map.removeControl(overviewMapControl);
+        overviewMapControl = overviewMapControl = new OverviewMap({
+          // see in overviewmap-custom.html to see the custom CSS used
+          className: 'ol-overviewmap ol-custom-overviewmap',
+          layers: [currentMapDi],
+          collapsed: false,
+          collapsible: true // 允许折叠
+        });
+        map.addControl(overviewMapControl);
         map.setLayers(all)
         
     }
@@ -594,6 +624,7 @@ import {ref, onMounted} from 'vue'
 
     }
 
+
 </script>
 
 
@@ -613,12 +644,90 @@ import {ref, onMounted} from 'vue'
     }
 
     .map_s1{
-        width: 100%; height: 55%;min-width: 100%;min-height: 65%;position: relative;
+        width: 100%; height: 55%;min-width: 100%;min-height: 720px;position: relative;
     }
     .map_s2{
         width: 100%; height: 100%;min-width: 100%;min-height: 100%;position: absolute;
         z-index: 3;
         top: 0;
+    }
+    :deep(#map > div.ol-viewport > div.ol-overlaycontainer-stopevent > div.ol-overviewmap.ol-custom-overviewmap.ol-unselectable.ol-control > button){
+      display: inline-block;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid #dcdfe6;
+      color: #606266;
+      -webkit-appearance: none;
+      text-align: center;
+      box-sizing: border-box;
+      outline: none;
+      margin: 0;
+      transition: 0.1s;
+      font-weight: 500;
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 4px;
+      background-color: #f0f8ff;
+
+    }
+    :deep(#map .ol-overlaycontainer-stopevent .ol-custom-overviewmap) {
+      position: absolute !important;
+      bottom: 10px !important;
+      right: 10px !important;
+      top: auto !important;
+      left: auto !important;
+      width: 250px !important;
+      height: 150px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      z-index: 1000 !important;
+      pointer-events: auto !important;
+    }
+
+    :deep(#map .ol-custom-overviewmap .ol-overviewmap-map) {
+      border: none;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    :deep(#map .ol-custom-overviewmap:not(.ol-collapsed)) {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    :deep(#map .ol-custom-overviewmap .ol-overviewmap-box) {
+      border: 2px solid #ff4d4f;
+      box-shadow: 0 0 3px rgba(255,77,79,0.5);
+    }
+
+    :deep(#map .ol-custom-overviewmap button) {
+      /* 折叠状态：恢复原生位置逻辑 */
+      position: static !important;
+      margin: 2px !important;
+      /* 保持折叠按钮的视觉样式 */
+      background-color: #f0f8ff !important;
+      border-radius: 2px !important;
+    }
+    :deep(#map .ol-custom-overviewmap:not(.ol-collapsed) button) {
+      /* 未折叠状态：右上角固定按钮 */
+      position: absolute !important;
+      right: 5px !important;
+      top: 5px !important;
+      z-index: 1001 !important;
+    }
+
+    :deep(#map .ol-custom-overviewmap.ol-collapsed) {
+      /* 折叠状态下的容器样式 */
+      width: auto !important;
+      height: auto !important;
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    :deep(#map .ol-overlaycontainer-stopevent) {
+      pointer-events: none !important;
     }
     .map_select{
         position: absolute;

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import cm from '../components/cm.vue'
 import CoordPick from '../components/gis/CoordPick.vue';
+import arcgis from '../components/gis/ArcgisDemo.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,12 @@ const router = createRouter({
       path: '/cm',
       name: 'cm',
       component: cm
+    }
+    ,
+    {
+      path: '/arcgis',
+      name: 'arcgis',
+      component: arcgis
     }
   ]
 })
