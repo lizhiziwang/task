@@ -7,8 +7,16 @@
 import {onMounted} from 'vue';
 import * as Cesium from 'cesium'
 import {SceneMode} from 'cesium'
+// 对于 Vite 项目
+import aomenModel from '@/assets/aomen.glb';
 
 let viewer;
+// 高德地图
+var gaodeLayer = new Cesium.UrlTemplateImageryProvider({
+            url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+            minimumLevel: 4,
+            maximumLevel: 18
+        })
 
 onMounted(() => {
   Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhNDQ5MmY1YS0wNjU0LTQ5MjgtOGYxMC1hZDZkN2Q2NzY4MDUiLCJpZCI6MTk2NDI0LCJpYXQiOjE3MTg3NjEzMjZ9.3A3qMen6eJ_cFkYvRrSE3iCJ-k2fqzMdnCMkZ1XjND8'
@@ -37,7 +45,7 @@ onMounted(() => {
     homeButton: true, //是否显示Home按钮
     // imageryProvider:esri,//自定义图层
     terrainProvider: Cesium.createWorldTerrain({
-      requestWaterMask: true,//水面特效
+      requestWaterMask: false,//水面特效
       // requestVertexNormals: true
     }),//地形图层也就是三维地图
   })
@@ -45,18 +53,21 @@ onMounted(() => {
   // 清除默认图层
   viewer.imageryLayers.removeAll();
   viewer.scene.mode = SceneMode.COLUMBUS_VIEW;
-  viewer.imageryLayers.addImageryProvider(esri)
+  // viewer.imageryLayers.addImageryProvider(esri)
+
+  viewer.imageryLayers.addImageryProvider(gaodeLayer)
+
   // addJapan3D();
 
 
-  let tiandiyu = viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
-    url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=f0ef2118b8ccd76bfd9acc8217e5dab0",
-    layer: "img",
-    style: "default",
-    format: "image/jpeg",
-    tileMatrixSetID: "w",
-    show: true
-  }));
+  // let tiandiyu = viewer.imageryLayers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
+  //   url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=f0ef2118b8ccd76bfd9acc8217e5dab0",
+  //   layer: "img",
+  //   style: "default",
+  //   format: "image/jpeg",
+  //   tileMatrixSetID: "w",
+  //   show: true
+  // }));
   // // 错误处理
   // tiandiyu.errorEvent.addEventListener((error) => {
   //   console.error("天地图图层加载错误:", error);
@@ -64,15 +75,21 @@ onMounted(() => {
   // });
   // console.log(tiandiyu)
 
-  // //相机
-  // viewer.camera.setView({
-  //   destination: Cartesian,//初始位置
-  //   orientation: {//初始方向
-  //     heading: Cesium.Math.toRadians(10), //初始方向
-  //     pitch: Cesium.Math.toRadians(-90), //初始方向
-  //     roll: Cesium.Math.toRadians(0),
-  //   }
-  // })
+  //相机
+
+
+// // 创建相机初始位置和朝向
+// var initialPosition = new Cesium.Cartesian3.fromDegrees(-73.998114468289017509, 40.674512895646692812, 2631.082799425431);
+// var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(7.1077496389876024807, -31.987223091598949054, 0.025883251314954971306);
+
+//   viewer.camera.setView({
+//     destination: initialPosition,//初始位置
+//     orientation: {//初始方向
+//       heading: initialOrientation.heading, //初始方向
+//       pitch: initialOrientation.pitch, //初始方向
+//       roll: initialOrientation.roll,
+//     }
+//   })
 
   // //添加模型
   // addThreeDTiles({
@@ -110,9 +127,9 @@ onMounted(() => {
     name: "aomen.glb",
     position: Cesium.Cartesian3.fromDegrees(		113.56320664971413,22.163772045553486, -100),
     model: {
-      uri: "src/assets/aomen.glb",
-      minimumPixelSize: 128,
-      maximumScale: 200,
+      uri: aomenModel,
+      // minimumPixelSize: 128,
+      // maximumScale: 200,
       heightReference: Cesium.HeightReference.CLAMP_TO_GROUND  // 自动贴合地形
     }
   });
@@ -132,6 +149,22 @@ onMounted(() => {
 
 
         // infoView();
+
+  // 添加地图点击事件
+  var handlePoint = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handlePoint.setInputAction(function (event) {
+        let pick = viewer.scene.pick(event.position)
+        console.log(pick.id.pointData)
+        if(!pick){
+            return
+        }
+        console.log(pick)
+        //用以下条件判断只有点击到点上才会触发此动作
+        if(pick&&pick.id&&pick.id.pointData){
+    console.log('进行点击')
+    //可以在这里去写点击后需要执行什么
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 })
 

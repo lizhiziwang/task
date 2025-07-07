@@ -29,6 +29,7 @@ export default defineConfig({
   plugins: [
     vue(),cesium()
   ],
+  assetsInclude: ['**/*.glb'],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

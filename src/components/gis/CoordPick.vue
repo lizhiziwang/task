@@ -74,6 +74,8 @@
                       <div >
                         <el-input v-model="coord" style="width: 240px" placeholder="例：113,23" />
                         <el-button type="primary" @click="drawPoint" style="margin-left: 10px;">确定</el-button>
+<!--                        <el-button type="primary" @click="animonAxtion" style="margin-left: 10px;">点动画效果</el-button>-->
+
                       </div>
                     </div>
                   </el-descriptions-item>
@@ -174,6 +176,7 @@ import {ref, onMounted} from 'vue'
       DragRotateAndZoom,
       defaults as defaultInteractions,
     } from 'ol/interaction.js';
+    import pngLocation from '@/assets/location.png'
 
 
 
@@ -237,7 +240,7 @@ import {ref, onMounted} from 'vue'
             //引入地图
             layers: [maps["高德地图"]],
             view: vire_ ,
-            
+
         });
         map.addControl(overviewMapControl);
         map.addInteraction(new DragRotateAndZoom())
@@ -260,6 +263,8 @@ import {ref, onMounted} from 'vue'
           className: 'ol-overviewmap ol-custom-overviewmap',
           layers: [currentMapDi],
           collapsed: false,
+          label: 'open',
+          collapseLabel: 'close',
           collapsible: true // 允许折叠
         });
         map.addControl(overviewMapControl);
@@ -281,7 +286,7 @@ import {ref, onMounted} from 'vue'
         );
         var style = new Style({
             image: new Icon({
-                src: 'src/assets/location.png',//图标路径
+                src: pngLocation,//图标路径
                 anchor: [0.5, 1],//锚点
                 scale: 0.16,//大小
                 rotation: 0	//旋转角度
@@ -290,7 +295,14 @@ import {ref, onMounted} from 'vue'
 
         rt.setStyle(style)
 
-        source.addFeature(rt)
+        source.addFeature(rt);
+        // 动画过度
+      map.getView().animate({
+        center: rt.getGeometry().getCoordinates(),
+        zoom: 8,
+        duration: 2000,
+        easing: easeOut
+      })
     }
 
     const drawWkt = ()=>{
